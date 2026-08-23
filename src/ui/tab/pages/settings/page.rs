@@ -1,12 +1,13 @@
 use rust_i18n::t;
 use winsafe::{gui, prelude::*};
 
-use super::{builder, events};
+use super::events;
 
 #[derive(Clone)]
 pub struct SettingsPage {
     tab_page: gui::TabPage,
     group_box: gui::Button,
+    scrollable_panel: gui::WindowControl,
     button_select_all_toggle: gui::Button,
     button_apply: gui::Button,
 }
@@ -19,14 +20,16 @@ impl From<SettingsPage> for gui::TabPage {
 
 impl SettingsPage {
     pub fn new(parent_window: &(impl GuiParent + 'static)) -> Self {
-        let tab_page = builder::create_tab_page(parent_window);
-        let group_box = builder::create_group_box(&tab_page);
-        let button_select_all_toggle = builder::create_button_select_all_toggle(&tab_page);
-        let button_apply = builder::create_button_apply(&tab_page);
+        let tab_page = super::builder::create_tab_page(parent_window);
+        let group_box = super::builder::create_group_box(&tab_page);
+        let scrollable_panel = super::builder::create_scrollable_panel(&tab_page);
+        let button_select_all_toggle = super::builder::create_button_select_all_toggle(&tab_page);
+        let button_apply = super::builder::create_button_apply(&tab_page);
 
         events::setup_all_events(
             &tab_page,
             &group_box,
+            &scrollable_panel,
             &button_select_all_toggle,
             &button_apply,
         );
@@ -34,6 +37,7 @@ impl SettingsPage {
         Self {
             tab_page,
             group_box,
+            scrollable_panel,
             button_select_all_toggle,
             button_apply,
         }

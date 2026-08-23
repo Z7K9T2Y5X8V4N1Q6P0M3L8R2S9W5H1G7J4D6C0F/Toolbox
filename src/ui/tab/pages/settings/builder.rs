@@ -24,6 +24,23 @@ pub(super) fn create_group_box(parent_window: &gui::TabPage) -> gui::Button {
     )
 }
 
+pub(super) fn create_scrollable_panel(parent_window: &gui::TabPage) -> gui::WindowControl {
+    gui::WindowControl::new(
+        parent_window,
+        gui::WindowControlOpts {
+            style: co::WS::CHILD
+                | co::WS::VISIBLE
+                | co::WS::CLIPCHILDREN
+                | co::WS::CLIPSIBLINGS
+                | co::WS::VSCROLL,
+            ex_style: co::WS_EX::CLIENTEDGE,
+            class_style: co::CS::HREDRAW | co::CS::VREDRAW,
+            class_bg_brush: gui::Brush::Color(co::COLOR::WINDOW),
+            ..Default::default()
+        },
+    )
+}
+
 pub(super) fn create_button_select_all_toggle(parent_window: &gui::TabPage) -> gui::Button {
     gui::Button::new(
         parent_window,

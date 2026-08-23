@@ -1,3 +1,5 @@
+use std::cell::Cell;
+
 use winsafe::{gui, prelude::*};
 
 use crate::ui;
@@ -7,11 +9,18 @@ use super::layout::SettingsPageLayout;
 pub(super) fn setup_all_events(
     tab_page: &gui::TabPage,
     group_box: &gui::Button,
+    scrollable_panel: &gui::WindowControl,
     button_select_all_toggle: &gui::Button,
     button_apply: &gui::Button,
 ) {
     setup_tab_page_background_event(tab_page);
-    setup_resize_event(tab_page, group_box, button_select_all_toggle, button_apply);
+    setup_resize_event(
+        tab_page,
+        group_box,
+        scrollable_panel,
+        button_select_all_toggle,
+        button_apply,
+    );
     setup_button_select_all_toggle_event(button_select_all_toggle);
     setup_button_apply_event(button_apply);
 }
@@ -23,13 +32,25 @@ fn setup_tab_page_background_event(tab_page: &gui::TabPage) {
 fn setup_resize_event(
     tab_page: &gui::TabPage,
     group_box: &gui::Button,
+    scrollable_panel: &gui::WindowControl,
     button_select_all_toggle: &gui::Button,
     button_apply: &gui::Button,
 ) {
     let cloned_group_box_for_window_size_event = group_box.clone();
+    let cloned_scrollable_panel_for_window_size_event = scrollable_panel.clone();
     let cloned_button_select_all_toggle_for_window_size_event = button_select_all_toggle.clone();
     let cloned_button_apply_for_window_size_event = button_apply.clone();
+
+    let reparent_done = Cell::new(false);
+
     tab_page.on().wm_size(move |size_info| {
+        if !reparent_done.get() {
+            cloned_scrollable_panel_for_window_size_event
+                .hwnd()
+                .SetParent(&cloned_group_box_for_window_size_event.hwnd())?;
+            reparent_done.set(true);
+        }
+
         let settings_page_layout =
             SettingsPageLayout::calculate(size_info.client_area.cx, size_info.client_area.cy);
 
@@ -37,6 +58,12 @@ fn setup_resize_event(
             cloned_group_box_for_window_size_event.hwnd(),
             settings_page_layout.group_box_position,
             settings_page_layout.group_box_size,
+        )?;
+
+        ui::tab::utils::reposition_control(
+            cloned_scrollable_panel_for_window_size_event.hwnd(),
+            settings_page_layout.scrollable_panel_position,
+            settings_page_layout.scrollable_panel_size,
         )?;
 
         ui::tab::utils::reposition_control(

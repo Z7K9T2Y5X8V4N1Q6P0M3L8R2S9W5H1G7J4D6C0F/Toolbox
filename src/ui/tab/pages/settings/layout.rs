@@ -34,8 +34,8 @@ impl SettingsPageLayout {
             tab_page_client_height - (2 * group_box_margin) - button_height - group_box_margin;
 
         let scrollable_panel_position = POINT {
-            x: group_box_internal_padding,
-            y: group_box_title_bar_height,
+            x: group_box_margin + group_box_internal_padding,
+            y: group_box_margin + group_box_title_bar_height,
         };
         let scrollable_panel_size = SIZE {
             cx: group_box_width - 2 * group_box_internal_padding,

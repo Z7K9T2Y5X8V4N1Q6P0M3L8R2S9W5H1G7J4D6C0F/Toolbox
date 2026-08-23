@@ -1,6 +1,4 @@
-use std::cell::Cell;
-
-use winsafe::{gui, prelude::*};
+use winsafe::{HWND, HwndPlace, POINT, SIZE, co, gui, prelude::*};
 
 use crate::ui;
 
@@ -41,15 +39,8 @@ fn setup_resize_event(
     let cloned_button_select_all_toggle_for_window_size_event = button_select_all_toggle.clone();
     let cloned_button_apply_for_window_size_event = button_apply.clone();
 
-    let reparent_done = Cell::new(false);
-
     tab_page.on().wm_size(move |size_info| {
-        if !reparent_done.get() {
-            cloned_scrollable_panel_for_window_size_event
-                .hwnd()
-                .SetParent(&cloned_group_box_for_window_size_event.hwnd())?;
-            reparent_done.set(true);
-        }
+        ui::tab::utils::bring_control_to_top(cloned_scrollable_panel_for_window_size_event.hwnd())?;
 
         let settings_page_layout =
             SettingsPageLayout::calculate(size_info.client_area.cx, size_info.client_area.cy);

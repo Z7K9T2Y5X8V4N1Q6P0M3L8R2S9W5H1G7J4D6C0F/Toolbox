@@ -25,3 +25,13 @@ pub(super) fn reposition_control(
     )?;
     Ok(())
 }
+
+pub(super) fn bring_control_to_top(control_hwnd: &HWND) -> winsafe::AnyResult<()> {
+    control_hwnd.SetWindowPos(
+        HwndPlace::Place(co::HWND_PLACE::TOP),
+        POINT::default(),
+        SIZE::default(),
+        co::SWP::NOMOVE | co::SWP::NOSIZE,
+    )?;
+    Ok(())
+}

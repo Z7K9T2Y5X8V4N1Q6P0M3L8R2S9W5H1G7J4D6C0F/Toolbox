@@ -60,3 +60,12 @@ fn create_language_popup_menu() -> winsafe::AnyResult<HMENU> {
 
     Ok(language_popup_menu)
 }
+
+pub(super) fn rebuild_main_menu(main_window_hwnd: &winsafe::HWND) -> winsafe::AnyResult<()> {
+    let old_hmenu = main_window_hwnd.GetMenu();
+    main_window_hwnd.SetMenu(&super::build_main_menu()?)?;
+    if let Some(mut old_hmenu) = old_hmenu {
+        old_hmenu.DestroyMenu()?;
+    }
+    Ok(())
+}

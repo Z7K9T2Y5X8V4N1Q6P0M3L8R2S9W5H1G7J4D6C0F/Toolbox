@@ -90,3 +90,55 @@ CONFIG_WRITE_FAILED:
 CONFIG_SAVE_FAILED:
   en-US: "Failed to save configuration:\n%{save_error}"
   zh-CN: "保存配置失败:\n%{save_error}"
+
+CHECKBOX_DISABLE_WINDOWS_UPDATE:
+  en-US: "Disable Windows Update"
+  zh-CN: "禁用 Windows Update"
+
+CHECKBOX_PAUSE_WINDOWS_UPDATE:
+  en-US: "Pause Windows Update"
+  zh-CN: "暂停 Windows Update"
+
+CHECKBOX_HIDE_WINDOWS_UPDATE:
+  en-US: "Hide Windows Update"
+  zh-CN: "隐藏 Windows Update"
+
+CHECKBOX_DISABLE_TASKBAR_SEARCH_ADS:
+  en-US: "Disable Taskbar search advertisements"
+  zh-CN: "禁用任务栏搜索广告"
+
+CHECKBOX_ENABLE_MODERN_EXPLORER:
+  en-US: "Enable Modern Explorer options"
+  zh-CN: "启用现代资源管理器选项"
+
+CHECKBOX_DISABLE_WINDOWS_SPOTLIGHT:
+  en-US: "Disable Windows Spotlight"
+  zh-CN: "禁用 Windows Spotlight"
+
+CHECKBOX_DISABLE_EXPLORER_SEARCH_BAR:
+  en-US: "Disable Explorer modern search bar"
+  zh-CN: "禁用资源管理器现代搜索栏"
+
+CHECKBOX_DISABLE_EXPLORER_CONTEXT_MENU:
+  en-US: "Disable Explorer modern context menu"
+  zh-CN: "禁用资源管理器现代右键菜单"
+
+CHECKBOX_DISABLE_FOLDER_TYPE_DISCOVERY:
+  en-US: "Disable Explorer Automatic Folder Type Discovery"
+  zh-CN: "禁用资源管理器文件夹类型自动发现"
+
+CHECKBOX_REMOVE_WINDOWS_DEFENDER:
+  en-US: "Remove Windows Defender services"
+  zh-CN: "移除 Windows Defender 服务"
+
+CHECKBOX_DISABLE_CORE_ISOLATION:
+  en-US: "Disable Core Isolation"
+  zh-CN: "禁用内核隔离"
+
+CHECKBOX_DISABLE_SPECTRE_MELTDOWN_PATCHES:
+  en-US: 'Disable "Spectre" / "Meltdown" vulnerability patches'
+  zh-CN: '禁用 "幽灵" / "熔断" 漏洞补丁'
+
+CHECKBOX_DISABLE_SMARTSCREEN:
+  en-US: "Disable SmartScreen"
+  zh-CN: "禁用 SmartScreen"

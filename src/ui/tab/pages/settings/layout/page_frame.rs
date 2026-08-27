@@ -1,14 +1,11 @@
 use winsafe::{POINT, SIZE, gui};
 
-const GROUP_BOX_MARGIN: i32 = 10;
-pub(super) const BUTTON_WIDTH: i32 = 75;
-pub(super) const BUTTON_HEIGHT: i32 = 25;
-const BUTTON_HORIZONTAL_GAP: i32 = 5;
+use super::constants::{
+    BUTTON_HEIGHT, BUTTON_HORIZONTAL_GAP, BUTTON_WIDTH, GROUP_BOX_INTERNAL_PADDING,
+    GROUP_BOX_MARGIN, GROUP_BOX_TITLE_BAR_HEIGHT,
+};
 
-const GROUP_BOX_TITLE_BAR_HEIGHT: i32 = 20;
-const GROUP_BOX_INTERNAL_PADDING: i32 = 6;
-
-pub(super) struct SettingsPageLayout {
+pub(in crate::ui::tab::pages::settings) struct SettingsPageLayout {
     pub group_box_position: POINT,
     pub group_box_size: SIZE,
     pub scrollable_panel_position: POINT,
@@ -25,7 +22,6 @@ impl SettingsPageLayout {
         let button_width = gui::dpi_x(BUTTON_WIDTH);
         let button_height = gui::dpi_y(BUTTON_HEIGHT);
         let button_horizontal_gap = gui::dpi_x(BUTTON_HORIZONTAL_GAP);
-
         let group_box_title_bar_height = gui::dpi_y(GROUP_BOX_TITLE_BAR_HEIGHT);
         let group_box_internal_padding = gui::dpi_x(GROUP_BOX_INTERNAL_PADDING);
 

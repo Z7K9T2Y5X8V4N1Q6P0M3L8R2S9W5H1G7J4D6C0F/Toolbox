@@ -1,9 +1,9 @@
 use rust_i18n::t;
 use winsafe::{co, gui, prelude::*};
 
-use super::layout::{BUTTON_HEIGHT, BUTTON_WIDTH};
-
-pub(super) fn create_tab_page(parent_window: &(impl GuiParent + 'static)) -> gui::TabPage {
+pub(in crate::ui::tab::pages::settings) fn create_tab_page(
+    parent_window: &(impl GuiParent + 'static),
+) -> gui::TabPage {
     gui::TabPage::new(
         parent_window,
         gui::TabPageOpts {
@@ -13,7 +13,9 @@ pub(super) fn create_tab_page(parent_window: &(impl GuiParent + 'static)) -> gui
     )
 }
 
-pub(super) fn create_group_box(parent_window: &gui::TabPage) -> gui::Button {
+pub(in crate::ui::tab::pages::settings) fn create_group_box(
+    parent_window: &gui::TabPage,
+) -> gui::Button {
     gui::Button::new(
         parent_window,
         gui::ButtonOpts {
@@ -24,7 +26,9 @@ pub(super) fn create_group_box(parent_window: &gui::TabPage) -> gui::Button {
     )
 }
 
-pub(super) fn create_scrollable_panel(parent_window: &gui::TabPage) -> gui::WindowControl {
+pub(in crate::ui::tab::pages::settings) fn create_scrollable_panel(
+    parent_window: &gui::TabPage,
+) -> gui::WindowControl {
     gui::WindowControl::new(
         parent_window,
         gui::WindowControlOpts {
@@ -41,25 +45,15 @@ pub(super) fn create_scrollable_panel(parent_window: &gui::TabPage) -> gui::Wind
     )
 }
 
-pub(super) fn create_button_select_all_toggle(parent_window: &gui::TabPage) -> gui::Button {
-    gui::Button::new(
+pub(in crate::ui::tab::pages::settings) fn create_content_panel(
+    parent_window: &gui::WindowControl,
+) -> gui::WindowControl {
+    gui::WindowControl::new(
         parent_window,
-        gui::ButtonOpts {
-            text: &t!("BUTTON_SELECT_ALL_TOGGLE"),
-            width: BUTTON_WIDTH,
-            height: BUTTON_HEIGHT,
-            ..Default::default()
-        },
-    )
-}
-
-pub(super) fn create_button_apply(parent_window: &gui::TabPage) -> gui::Button {
-    gui::Button::new(
-        parent_window,
-        gui::ButtonOpts {
-            text: &t!("BUTTON_APPLY"),
-            width: BUTTON_WIDTH,
-            height: BUTTON_HEIGHT,
+        gui::WindowControlOpts {
+            style: co::WS::CHILD | co::WS::VISIBLE | co::WS::CLIPCHILDREN | co::WS::CLIPSIBLINGS,
+            class_style: co::CS::HREDRAW | co::CS::VREDRAW,
+            class_bg_brush: gui::Brush::Color(co::COLOR::WINDOW),
             ..Default::default()
         },
     )

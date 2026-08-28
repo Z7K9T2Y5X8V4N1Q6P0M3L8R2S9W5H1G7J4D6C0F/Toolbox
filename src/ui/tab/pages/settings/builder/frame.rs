@@ -37,9 +37,9 @@ pub(in crate::ui::tab::pages::settings) fn create_scrollable_panel(
                 | co::WS::CLIPCHILDREN
                 | co::WS::CLIPSIBLINGS
                 | co::WS::VSCROLL,
-            ex_style: co::WS_EX::CLIENTEDGE | co::WS_EX::COMPOSITED,
+            ex_style: co::WS_EX::COMPOSITED,
             class_style: co::CS::HREDRAW | co::CS::VREDRAW,
-            class_bg_brush: gui::Brush::Color(co::COLOR::WINDOW),
+            class_bg_brush: gui::Brush::Color(co::COLOR::BTNFACE),
             ..Default::default()
         },
     )
@@ -53,7 +53,7 @@ pub(in crate::ui::tab::pages::settings) fn create_content_panel(
         gui::WindowControlOpts {
             style: co::WS::CHILD | co::WS::VISIBLE | co::WS::CLIPCHILDREN | co::WS::CLIPSIBLINGS,
             class_style: co::CS::HREDRAW | co::CS::VREDRAW,
-            class_bg_brush: gui::Brush::Color(co::COLOR::WINDOW),
+            class_bg_brush: gui::Brush::Color(co::COLOR::BTNFACE),
             ..Default::default()
         },
     )

@@ -37,7 +37,7 @@ pub(in crate::ui::tab::pages::settings) fn create_scrollable_panel(
                 | co::WS::CLIPCHILDREN
                 | co::WS::CLIPSIBLINGS
                 | co::WS::VSCROLL,
-            ex_style: co::WS_EX::CLIENTEDGE,
+            ex_style: co::WS_EX::CLIENTEDGE | co::WS_EX::COMPOSITED,
             class_style: co::CS::HREDRAW | co::CS::VREDRAW,
             class_bg_brush: gui::Brush::Color(co::COLOR::WINDOW),
             ..Default::default()

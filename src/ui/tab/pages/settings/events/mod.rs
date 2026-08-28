@@ -1,4 +1,4 @@
-mod action_buttons;
+mod buttons;
 mod resize;
 mod scroll;
 mod setup;

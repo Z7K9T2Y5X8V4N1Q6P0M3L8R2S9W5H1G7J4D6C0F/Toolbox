@@ -34,6 +34,53 @@ impl CheckboxId {
         ]
     }
 
+    pub fn from_control_id(control_id: u16) -> Option<CheckboxId> {
+        match control_id {
+            2001 => Some(CheckboxId::DisableWindowsUpdate),
+            2002 => Some(CheckboxId::PauseWindowsUpdate),
+            2003 => Some(CheckboxId::HideWindowsUpdate),
+            2004 => Some(CheckboxId::DisableTaskbarSearchAds),
+            2005 => Some(CheckboxId::EnableModernExplorer),
+            2006 => Some(CheckboxId::DisableWindowsSpotlight),
+            2007 => Some(CheckboxId::DisableExplorerSearchBar),
+            2008 => Some(CheckboxId::DisableExplorerContextMenu),
+            2009 => Some(CheckboxId::DisableFolderTypeDiscovery),
+            2010 => Some(CheckboxId::RemoveWindowsDefender),
+            2011 => Some(CheckboxId::DisableCoreIsolation),
+            2012 => Some(CheckboxId::DisableSpectreMeltdownPatches),
+            2013 => Some(CheckboxId::DisableSmartScreen),
+            _ => None,
+        }
+    }
+
+    pub fn description_i18n_key(&self) -> &'static str {
+        match self {
+            CheckboxId::DisableWindowsUpdate => "CHECKBOX_DISABLE_WINDOWS_UPDATE_DESCRIPTION",
+            CheckboxId::PauseWindowsUpdate => "CHECKBOX_PAUSE_WINDOWS_UPDATE_DESCRIPTION",
+            CheckboxId::HideWindowsUpdate => "CHECKBOX_HIDE_WINDOWS_UPDATE_DESCRIPTION",
+            CheckboxId::DisableTaskbarSearchAds => {
+                "CHECKBOX_DISABLE_TASKBAR_SEARCH_ADS_DESCRIPTION"
+            }
+            CheckboxId::EnableModernExplorer => "CHECKBOX_ENABLE_MODERN_EXPLORER_DESCRIPTION",
+            CheckboxId::DisableWindowsSpotlight => "CHECKBOX_DISABLE_WINDOWS_SPOTLIGHT_DESCRIPTION",
+            CheckboxId::DisableExplorerSearchBar => {
+                "CHECKBOX_DISABLE_EXPLORER_SEARCH_BAR_DESCRIPTION"
+            }
+            CheckboxId::DisableExplorerContextMenu => {
+                "CHECKBOX_DISABLE_EXPLORER_CONTEXT_MENU_DESCRIPTION"
+            }
+            CheckboxId::DisableFolderTypeDiscovery => {
+                "CHECKBOX_DISABLE_FOLDER_TYPE_DISCOVERY_DESCRIPTION"
+            }
+            CheckboxId::RemoveWindowsDefender => "CHECKBOX_REMOVE_WINDOWS_DEFENDER_DESCRIPTION",
+            CheckboxId::DisableCoreIsolation => "CHECKBOX_DISABLE_CORE_ISOLATION_DESCRIPTION",
+            CheckboxId::DisableSpectreMeltdownPatches => {
+                "CHECKBOX_DISABLE_SPECTRE_MELTDOWN_PATCHES_DESCRIPTION"
+            }
+            CheckboxId::DisableSmartScreen => "CHECKBOX_DISABLE_SMARTSCREEN_DESCRIPTION",
+        }
+    }
+
     pub fn i18n_key(&self) -> &'static str {
         match self {
             CheckboxId::DisableWindowsUpdate => "CHECKBOX_DISABLE_WINDOWS_UPDATE",

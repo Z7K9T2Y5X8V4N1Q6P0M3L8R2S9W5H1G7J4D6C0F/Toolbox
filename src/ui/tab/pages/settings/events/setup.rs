@@ -13,6 +13,7 @@ pub(in crate::ui::tab::pages::settings) fn setup_all_events(
     checkboxes: &[(CheckboxId, gui::Button)],
     button_select_all_toggle: &gui::Button,
     button_apply: &gui::Button,
+    status_bar: &gui::StatusBar,
 ) {
     ui::tab::utils::setup_tab_page_background_events(tab_page);
 
@@ -31,4 +32,6 @@ pub(in crate::ui::tab::pages::settings) fn setup_all_events(
 
     buttons::setup_button_select_all_toggle_event(button_select_all_toggle, checkboxes);
     buttons::setup_button_apply_event(button_apply);
+
+    ui::statusbar::register_hover_events(content_panel, status_bar);
 }

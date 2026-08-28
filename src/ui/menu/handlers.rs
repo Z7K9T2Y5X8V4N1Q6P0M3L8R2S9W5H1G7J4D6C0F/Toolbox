@@ -56,8 +56,10 @@ fn apply_language_change(
     super::builder::rebuild_main_menu(&main_window_hwnd)?;
     main_window_hwnd.SetWindowText(&rust_i18n::t!("TOOLBOX_TITLE"))?;
 
-    main_window_instance.tab_pages.update_tab_control_titles()?;
-    main_window_instance.tab_pages.update_page_contents()?;
+    main_window_instance
+        .tab_container
+        .update_tab_control_titles()?;
+    main_window_instance.tab_container.update_page_contents()?;
 
     let mut config = AppConfig::load();
     config.language = language;

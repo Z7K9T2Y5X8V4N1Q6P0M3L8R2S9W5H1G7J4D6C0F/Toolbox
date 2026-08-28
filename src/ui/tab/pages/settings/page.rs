@@ -22,7 +22,7 @@ impl From<SettingsPage> for gui::TabPage {
 }
 
 impl SettingsPage {
-    pub fn new(parent_window: &(impl GuiParent + 'static)) -> Self {
+    pub fn new(parent_window: &(impl GuiParent + 'static), status_bar: gui::StatusBar) -> Self {
         let tab_page = super::builder::create_tab_page(parent_window);
         let group_box = super::builder::create_group_box(&tab_page);
         let scrollable_panel = super::builder::create_scrollable_panel(&tab_page);
@@ -39,6 +39,7 @@ impl SettingsPage {
             &checkboxes,
             &button_select_all_toggle,
             &button_apply,
+            &status_bar,
         );
 
         Self {

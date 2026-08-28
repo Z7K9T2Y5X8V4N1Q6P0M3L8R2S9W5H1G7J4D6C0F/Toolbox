@@ -1,7 +1,7 @@
 use winsafe::gui;
 
 const WINDOW_WIDTH: i32 = 310;
-const WINDOW_HEIGHT: i32 = 530;
+const WINDOW_HEIGHT: i32 = 553;
 
 pub fn center_and_resize_window(main_window_handle: &winsafe::HWND) -> winsafe::AnyResult<()> {
     let calculated_window_size = winsafe::SIZE {

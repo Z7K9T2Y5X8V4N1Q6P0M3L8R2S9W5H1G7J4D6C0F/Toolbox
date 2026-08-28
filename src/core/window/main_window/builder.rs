@@ -1,14 +1,16 @@
 use std::{cell::RefCell, rc::Rc};
 
 use rust_i18n::t;
+use winsafe::gui;
 
 use crate::ui;
 
 #[derive(Clone)]
 pub struct MainWindow {
-    pub(crate) main_window: winsafe::gui::WindowMain,
+    pub(crate) main_window: gui::WindowMain,
     pub(crate) pending_error_message: Rc<RefCell<Option<String>>>,
-    pub(crate) tab_pages: ui::tab::control::container::TabPages,
+    pub(crate) tab_container: ui::tab::control::container::TabContainer,
+    pub(crate) status_bar: gui::StatusBar,
 }
 
 impl MainWindow {
@@ -16,18 +18,21 @@ impl MainWindow {
         crate::core::window::main_window::init::initialize_application();
 
         let window_title = t!("TOOLBOX_TITLE");
-        let main_window = winsafe::gui::WindowMain::new(winsafe::gui::WindowMainOpts {
+        let main_window = gui::WindowMain::new(gui::WindowMainOpts {
             title: &window_title,
             style: winsafe::co::WS::OVERLAPPEDWINDOW,
             ..Default::default()
         });
 
-        let tab_pages = ui::tab::control::container::TabPages::new(&main_window);
+        let status_bar = ui::statusbar::create_status_bar(&main_window);
+        let tab_container =
+            ui::tab::control::container::TabContainer::new(&main_window, status_bar.clone());
 
         let main_window_instance = Self {
             main_window,
             pending_error_message: Rc::new(RefCell::new(None)),
-            tab_pages,
+            tab_container,
+            status_bar,
         };
 
         crate::core::window::main_window::events::register_all_events(&main_window_instance)?;

@@ -142,3 +142,55 @@ CHECKBOX_DISABLE_SPECTRE_MELTDOWN_PATCHES:
 CHECKBOX_DISABLE_SMARTSCREEN:
   en-US: "Disable SmartScreen"
   zh-CN: "禁用 SmartScreen"
+
+CHECKBOX_DISABLE_WINDOWS_UPDATE_DESCRIPTION:
+  en-US: "Redirects Windows Update servers to 127.0.0.1"
+  zh-CN: "将 Windows Update 服务器重定向至本地回环地址"
+
+CHECKBOX_PAUSE_WINDOWS_UPDATE_DESCRIPTION:
+  en-US: "Extends the update pause deadline to year 9999"
+  zh-CN: "将更新暂停期限延长至 9999 年"
+
+CHECKBOX_HIDE_WINDOWS_UPDATE_DESCRIPTION:
+  en-US: "Hides the Windows Update entry from Settings"
+  zh-CN: "在系统设置中隐藏 Windows Update 入口"
+
+CHECKBOX_DISABLE_TASKBAR_SEARCH_ADS_DESCRIPTION:
+  en-US: "Disables trending searches and ads in taskbar search"
+  zh-CN: "禁用任务栏搜索中的热点推荐及广告"
+
+CHECKBOX_ENABLE_MODERN_EXPLORER_DESCRIPTION:
+  en-US: "Adds a Browse option to This PC to launch the UWP File Explorer"
+  zh-CN: "为此电脑右键菜单添加浏览选项以启动 UWP 版资源管理器"
+
+CHECKBOX_DISABLE_WINDOWS_SPOTLIGHT_DESCRIPTION:
+  en-US: "Disables the Windows Spotlight wallpaper feature"
+  zh-CN: "禁用 Windows Spotlight 桌面壁纸功能"
+
+CHECKBOX_DISABLE_EXPLORER_SEARCH_BAR_DESCRIPTION:
+  en-US: "Reverts the Explorer search bar to Windows 7 style"
+  zh-CN: "将资源管理器搜索栏还原为 Windows 7 样式"
+
+CHECKBOX_DISABLE_EXPLORER_CONTEXT_MENU_DESCRIPTION:
+  en-US: "Restores the classic right-click context menu"
+  zh-CN: "恢复传统右键菜单样式"
+
+CHECKBOX_DISABLE_FOLDER_TYPE_DISCOVERY_DESCRIPTION:
+  en-US: "Prevents Explorer from auto-switching folder view templates"
+  zh-CN: "阻止资源管理器自动切换文件夹视图模板"
+
+CHECKBOX_REMOVE_WINDOWS_DEFENDER_DESCRIPTION:
+  en-US: "Removes Windows Defender and all related components"
+  zh-CN: "移除 Windows Defender 及其全部组件"
+
+CHECKBOX_DISABLE_CORE_ISOLATION_DESCRIPTION:
+  en-US: "Disables hardware-level kernel isolation protection"
+  zh-CN: "关闭硬件级内核隔离保护"
+
+CHECKBOX_DISABLE_SPECTRE_MELTDOWN_PATCHES_DESCRIPTION:
+  en-US: "Disables CPU vulnerability mitigations"
+  zh-CN: "禁用 CPU 漏洞缓解补丁"
+
+CHECKBOX_DISABLE_SMARTSCREEN_DESCRIPTION:
+  en-US: "Disables Microsoft cloud-based file safety checks"
+  zh-CN: "停止微软云端文件安全检测"

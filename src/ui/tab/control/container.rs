@@ -1,18 +1,20 @@
+use winsafe::gui;
+use winsafe::prelude::*;
+
 use super::{builder, layout};
 use crate::ui::tab::pages::{settings::SettingsPage, window_visual_styles::WindowVisualStylesPage};
-use winsafe::{gui, prelude::*};
 
 #[derive(Clone)]
-pub struct TabPages {
+pub struct TabContainer {
     tab_control: gui::Tab,
     tab_pages: Vec<gui::TabPage>,
     settings_page: SettingsPage,
     window_visual_styles_page: WindowVisualStylesPage,
 }
 
-impl TabPages {
-    pub fn new(parent_window: &(impl GuiParent + 'static)) -> Self {
-        let settings_page = SettingsPage::new(parent_window);
+impl TabContainer {
+    pub fn new(parent_window: &(impl GuiParent + 'static), status_bar: gui::StatusBar) -> Self {
+        let settings_page = SettingsPage::new(parent_window, status_bar);
         let window_visual_styles_page = WindowVisualStylesPage::new(parent_window);
 
         let tab_pages = vec![
@@ -47,13 +49,11 @@ impl TabPages {
             let target_tab_control_item = self.tab_control.items().get(tab_control_index as u32);
             target_tab_control_item.set_text(tab_control_title)?;
         }
-
         Ok(())
     }
 
     pub fn update_page_contents(&self) -> winsafe::AnyResult<()> {
         self.settings_page.update_texts()?;
-
         Ok(())
     }
 }

@@ -41,9 +41,17 @@ fn register_window_size_event(main_window_instance: &MainWindow) {
         .main_window
         .on()
         .wm_size(move |size_info| {
+            let status_bar_height = cloned_main_window_instance_for_window_size_event
+                .status_bar
+                .hwnd()
+                .GetWindowRect()
+                .map(|rect| rect.bottom - rect.top)
+                .unwrap_or(0);
+
+            let available_height_for_tab = size_info.client_area.cy - status_bar_height;
             cloned_main_window_instance_for_window_size_event
-                .tab_pages
-                .resize(size_info.client_area.cx, size_info.client_area.cy)?;
+                .tab_container
+                .resize(size_info.client_area.cx, available_height_for_tab)?;
             Ok(())
         });
 }

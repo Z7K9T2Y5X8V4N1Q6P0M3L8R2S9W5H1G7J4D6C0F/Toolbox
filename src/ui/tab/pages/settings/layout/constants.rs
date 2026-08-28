@@ -6,7 +6,7 @@ pub(in crate::ui::tab::pages::settings) const CHECKBOX_HEIGHT: i32 = 22;
 pub(in crate::ui::tab::pages::settings) const CHECKBOX_VERTICAL_GAP: i32 = 10;
 pub(in crate::ui::tab::pages::settings) const CHECKBOX_LEFT_MARGIN: i32 = 20;
 pub(in crate::ui::tab::pages::settings) const CHECKBOX_RIGHT_MARGIN: i32 = 20;
-pub(in crate::ui::tab::pages::settings) const CHECKBOX_TOP_MARGIN: i32 = 16;
+pub(in crate::ui::tab::pages::settings) const CHECKBOX_TOP_MARGIN: i32 = 10;
 pub(in crate::ui::tab::pages::settings) const CHECKBOX_BOTTOM_MARGIN: i32 = 16;
 
 pub(in crate::ui::tab::pages::settings) const BUTTON_WIDTH: i32 = 75;

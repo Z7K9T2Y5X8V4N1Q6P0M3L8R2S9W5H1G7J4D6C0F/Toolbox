@@ -1,2 +1,2 @@
-pub mod ui_customization_hook;
+pub mod ui_customization;
 pub mod utils;

@@ -3,8 +3,8 @@ use crate::{error, ui};
 
 pub fn initialize_application() {
     setup_initial_locale();
-    ui::window::ui_customization_hook::install_ui_customization_hook();
-    error::panic_hook::install_panic_hook();
+    ui::window::ui_customization::install_ui_customization_hook();
+    error::panic::install_panic_hook();
     setup_config_locale();
 }
 

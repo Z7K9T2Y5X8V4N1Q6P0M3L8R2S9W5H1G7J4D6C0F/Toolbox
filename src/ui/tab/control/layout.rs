@@ -1,4 +1,3 @@
-use super::rect_calculator;
 use winsafe::{HwndPlace, POINT, SIZE, co, gui, prelude::*};
 
 const TAB_CONTROL_MARGIN: i32 = 10;
@@ -40,7 +39,7 @@ pub(super) fn resize_current_tab_page(
     };
 
     let tab_page_screen_to_client_rect =
-        rect_calculator::calculate_tab_page_rect(tab_control.hwnd())?;
+        crate::ui::tab::utils::calculate_tab_page_rect(tab_control.hwnd())?;
 
     let calculated_tab_page_content_size = SIZE {
         cx: tab_page_screen_to_client_rect.right - tab_page_screen_to_client_rect.left,

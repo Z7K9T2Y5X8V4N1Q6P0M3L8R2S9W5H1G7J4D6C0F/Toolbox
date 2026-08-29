@@ -33,5 +33,5 @@ pub(in crate::ui::tab::pages::settings) fn setup_all_events(
     buttons::setup_button_select_all_toggle_event(button_select_all_toggle, checkboxes);
     buttons::setup_button_apply_event(button_apply);
 
-    ui::statusbar::register_hover_events(content_panel, status_bar);
+    ui::statusbar::register_hover_events(scrollable_panel, status_bar);
 }

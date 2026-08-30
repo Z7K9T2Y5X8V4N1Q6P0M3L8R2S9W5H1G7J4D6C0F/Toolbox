@@ -100,19 +100,14 @@ fn update_scrollbar_range(
     scrollable_panel_visible_height: i32,
     content_panel_total_height: i32,
 ) -> winsafe::AnyResult<()> {
-    if content_panel_total_height <= scrollable_panel_visible_height {
-        scrollable_panel
-            .hwnd()
-            .ShowScrollBar(co::SBB::VERT, false)
-            .ok();
+    let is_needs_scrollbar = content_panel_total_height > scrollable_panel_visible_height;
 
-        super::scroll::apply_scroll_position(scrollable_panel, content_panel, 0)?;
-    } else {
-        scrollable_panel
-            .hwnd()
-            .ShowScrollBar(co::SBB::VERT, true)
-            .ok();
+    scrollable_panel
+        .hwnd()
+        .ShowScrollBar(co::SBB::VERT, is_needs_scrollbar)
+        .ok();
 
+    if is_needs_scrollbar {
         let scrollable_maximum =
             (content_panel_total_height - scrollable_panel_visible_height).max(0);
         let old_scroll_position = scrollable_panel.hwnd().GetScrollPos(co::SBB::VERT)?;
@@ -133,6 +128,8 @@ fn update_scrollbar_range(
             content_panel,
             clamped_old_scroll_position,
         )?;
+    } else {
+        super::scroll::apply_scroll_position(scrollable_panel, content_panel, 0)?;
     }
 
     Ok(())

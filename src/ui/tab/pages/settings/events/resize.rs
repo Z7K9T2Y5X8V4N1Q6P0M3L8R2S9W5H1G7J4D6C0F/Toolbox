@@ -110,8 +110,9 @@ fn update_scrollbar_range(
     if is_needs_scrollbar {
         let scrollable_maximum =
             (content_panel_total_height - scrollable_panel_visible_height).max(0);
-        let old_scroll_position = scrollable_panel.hwnd().GetScrollPos(co::SBB::VERT)?;
-        let clamped_old_scroll_position = old_scroll_position.min(scrollable_maximum).max(0);
+        let old_vertical_scroll_position = scrollable_panel.hwnd().GetScrollPos(co::SBB::VERT)?;
+        let clamped_old_vertical_scroll_position =
+            old_vertical_scroll_position.min(scrollable_maximum).max(0);
 
         let mut scroll_info = SCROLLINFO::default();
         scroll_info.fMask = co::SIF::RANGE | co::SIF::PAGE;
@@ -126,7 +127,7 @@ fn update_scrollbar_range(
         super::scroll::apply_scroll_position(
             scrollable_panel,
             content_panel,
-            clamped_old_scroll_position,
+            clamped_old_vertical_scroll_position,
         )?;
     } else {
         super::scroll::apply_scroll_position(scrollable_panel, content_panel, 0)?;

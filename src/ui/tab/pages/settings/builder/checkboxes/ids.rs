@@ -34,25 +34,6 @@ impl CheckboxId {
         ]
     }
 
-    pub fn from_control_id(control_id: u16) -> Option<CheckboxId> {
-        match control_id {
-            2001 => Some(CheckboxId::DisableWindowsUpdate),
-            2002 => Some(CheckboxId::PauseWindowsUpdate),
-            2003 => Some(CheckboxId::HideWindowsUpdate),
-            2004 => Some(CheckboxId::DisableTaskbarSearchAds),
-            2005 => Some(CheckboxId::EnableModernExplorer),
-            2006 => Some(CheckboxId::DisableWindowsSpotlight),
-            2007 => Some(CheckboxId::DisableExplorerSearchBar),
-            2008 => Some(CheckboxId::DisableExplorerContextMenu),
-            2009 => Some(CheckboxId::DisableFolderTypeDiscovery),
-            2010 => Some(CheckboxId::RemoveWindowsDefender),
-            2011 => Some(CheckboxId::DisableCoreIsolation),
-            2012 => Some(CheckboxId::DisableSpectreMeltdownPatches),
-            2013 => Some(CheckboxId::DisableSmartScreen),
-            _ => None,
-        }
-    }
-
     pub fn description_i18n_key(&self) -> &'static str {
         match self {
             CheckboxId::DisableWindowsUpdate => "CHECKBOX_DISABLE_WINDOWS_UPDATE_DESCRIPTION",

@@ -129,7 +129,7 @@ pub(super) fn setup_mousewheel_event(
     });
 }
 
-fn apply_scroll_position(
+pub(super) fn apply_scroll_position(
     scrollable_panel: &gui::WindowControl,
     content_panel: &gui::WindowControl,
     new_scroll_position: i32,

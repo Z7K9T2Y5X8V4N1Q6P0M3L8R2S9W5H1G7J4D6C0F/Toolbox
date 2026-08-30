@@ -73,9 +73,10 @@ pub(super) fn setup_resize_event(
 
         update_scrollbar_range(
             &cloned_scrollable_panel,
+            &cloned_content_panel,
             scrollable_panel_visible_height,
             content_panel_total_height,
-        );
+        )?;
 
         ui::tab::utils::reposition_control(
             cloned_button_apply.hwnd(),
@@ -95,29 +96,44 @@ pub(super) fn setup_resize_event(
 
 fn update_scrollbar_range(
     scrollable_panel: &gui::WindowControl,
+    content_panel: &gui::WindowControl,
     scrollable_panel_visible_height: i32,
     content_panel_total_height: i32,
-) {
+) -> winsafe::AnyResult<()> {
     if content_panel_total_height <= scrollable_panel_visible_height {
         scrollable_panel
             .hwnd()
             .ShowScrollBar(co::SBB::VERT, false)
             .ok();
+
+        super::scroll::apply_scroll_position(scrollable_panel, content_panel, 0)?;
     } else {
         scrollable_panel
             .hwnd()
             .ShowScrollBar(co::SBB::VERT, true)
             .ok();
 
+        let scrollable_maximum =
+            (content_panel_total_height - scrollable_panel_visible_height).max(0);
+        let old_scroll_position = scrollable_panel.hwnd().GetScrollPos(co::SBB::VERT)?;
+        let clamped_old_scroll_position = old_scroll_position.min(scrollable_maximum).max(0);
+
         let mut scroll_info = SCROLLINFO::default();
-        scroll_info.fMask = co::SIF::RANGE | co::SIF::PAGE | co::SIF::POS;
+        scroll_info.fMask = co::SIF::RANGE | co::SIF::PAGE;
         scroll_info.nMin = 0;
         scroll_info.nMax = content_panel_total_height - 1;
         scroll_info.nPage = scrollable_panel_visible_height as u32;
-        scroll_info.nPos = 0;
 
         scrollable_panel
             .hwnd()
             .SetScrollInfo(co::SBB::VERT, &scroll_info, true);
+
+        super::scroll::apply_scroll_position(
+            scrollable_panel,
+            content_panel,
+            clamped_old_scroll_position,
+        )?;
     }
+
+    Ok(())
 }

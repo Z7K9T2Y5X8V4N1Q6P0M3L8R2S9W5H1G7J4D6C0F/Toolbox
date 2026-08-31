@@ -1,6 +1,6 @@
-mod builder;
-mod handlers;
-pub mod ids;
+mod build;
+mod event;
+pub mod state;
 
-pub use builder::build_main_menu;
-pub use handlers::register_menu_events;
+pub use build::build_main_menu;
+pub use event::register_menu_events;

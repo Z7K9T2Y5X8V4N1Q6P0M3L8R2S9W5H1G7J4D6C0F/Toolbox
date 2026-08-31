@@ -7,6 +7,7 @@ use winsafe::prelude::Handle;
 
 use crate::config::AppLanguage;
 
+/// Represents the outcome of attempting to load the config file.
 pub enum ConfigLoadResult {
     Loaded(AppConfig),
     NotFound(AppConfig),

@@ -1,5 +1,5 @@
-mod builder;
-mod handlers;
+mod build;
+mod event;
 
-pub use builder::create_status_bar;
-pub use handlers::register_hover_events;
+pub use build::create_status_bar;
+pub use event::register_hover_events;

@@ -1,8 +1,17 @@
+//! Tab control construction.
+//!
+//! The tab control is built once during [`TabContainer::new`] and its titles
+//! are refreshed on every locale change via [`get_tab_control_titles`].
+
 use rust_i18n::t;
 use winsafe::{gui, prelude::*};
 
 use crate::ui::pages::{settings::SettingsPage, window_visual_styles::WindowVisualStylesPage};
 
+/// Create the [`gui::Tab`] control with all pages attached.
+///
+/// Page order here determines the tab order visible to the user.
+/// Titles are sourced from the current locale at construction time.
 pub(super) fn create_tab_control(
     parent_window: &(impl GuiParent + 'static),
     settings_page: &SettingsPage,
@@ -25,6 +34,10 @@ pub(super) fn create_tab_control(
     )
 }
 
+/// Return the localized title string for each tab, in display order.
+///
+/// Called both during construction and on locale change so tab titles
+/// always reflect the current language.
 pub(super) fn get_tab_control_titles() -> Vec<String> {
     vec![
         t!("TAB_SETTINGS").to_string(),

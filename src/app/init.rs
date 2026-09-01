@@ -1,6 +1,15 @@
+//! Application initialization routines that run before the main window is created.
+//!
+//! Call order matters here: locale must be set before any UI text is rendered,
+//! and the UI hook must be installed before any window is created.
+
 use crate::config::{AppConfig, AppLanguage};
 use crate::{error, ui};
 
+/// Run all initialization steps in the correct order.
+///
+/// This must be called once, at the very start of [`MainWindow::create_and_run`],
+/// before any Win32 window or control is created.
 pub fn initialize_application() {
     setup_initial_locale();
     ui::window::hook::install_ui_customization_hook();
@@ -9,7 +18,9 @@ pub fn initialize_application() {
 }
 
 /// Set the locale to the system default before config is loaded.
-/// This ensures early UI elements (e.g. config error dialogs) are localized.
+///
+/// This ensures early UI elements (e.g. config error dialogs) are localized
+/// using the system language rather than the hardcoded fallback.
 fn setup_initial_locale() {
     let system_locale =
         sys_locale::get_locale().unwrap_or_else(|| AppLanguage::EnUs.as_locale_str().to_string());
@@ -17,6 +28,9 @@ fn setup_initial_locale() {
 }
 
 /// Override the locale with the user's saved preference from config.
+///
+/// Called after [`setup_initial_locale`] so that if the config is missing
+/// or corrupt, the error dialog is still shown in the system language.
 fn setup_config_locale() {
     let app_config = AppConfig::load();
     rust_i18n::set_locale(&app_config.language.as_locale_str());

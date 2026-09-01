@@ -1,3 +1,9 @@
+//! Menu bar construction.
+//!
+//! [`build_main_menu`] builds the full menu tree from scratch using the
+//! current locale. It is called once on window creation and again after
+//! every language change via [`rebuild_main_menu`].
+
 use std::ops::Deref;
 
 use rust_i18n::t;
@@ -5,6 +11,10 @@ use winsafe::{BmpPtrStr, HMENU, IdMenu, MenuItem, co};
 
 use super::state::{IDM_LANG_EN_US, IDM_LANG_ZH_CN, IDM_OPTIONS_RESTART_EXPLORER};
 
+/// Build the complete main menu bar using the current locale.
+///
+/// Returns a new [`HMENU`] that can be attached to the main window
+/// via [`winsafe::HWND::SetMenu`].
 pub fn build_main_menu() -> winsafe::AnyResult<HMENU> {
     let main_menu_bar = HMENU::CreateMenu()?;
 
@@ -25,6 +35,7 @@ pub fn build_main_menu() -> winsafe::AnyResult<HMENU> {
     Ok(main_menu_bar)
 }
 
+/// Build the Options submenu.
 fn create_options_popup_menu() -> winsafe::AnyResult<HMENU> {
     let options_popup_menu = HMENU::CreatePopupMenu()?;
     options_popup_menu.append_item(&[MenuItem::Entry {
@@ -34,6 +45,10 @@ fn create_options_popup_menu() -> winsafe::AnyResult<HMENU> {
     Ok(options_popup_menu)
 }
 
+/// Build the Language submenu.
+///
+/// The currently active locale is shown as checked and grayed so the user
+/// can see the selection but cannot re-select it.
 fn create_language_popup_menu() -> winsafe::AnyResult<HMENU> {
     let language_popup_menu = HMENU::CreatePopupMenu()?;
     let current_locale = rust_i18n::locale();
@@ -61,7 +76,9 @@ fn create_language_popup_menu() -> winsafe::AnyResult<HMENU> {
 }
 
 /// Destroy the current menu bar and replace it with a freshly built one.
-/// Called after language change so all menu labels reflect the new locale.
+///
+/// Called after a language change so all menu labels reflect the new locale.
+/// The old [`HMENU`] is explicitly destroyed to avoid a resource leak.
 pub(super) fn rebuild_main_menu(main_window_hwnd: &winsafe::HWND) -> winsafe::AnyResult<()> {
     let old_hmenu = main_window_hwnd.GetMenu();
     main_window_hwnd.SetMenu(&build_main_menu()?)?;

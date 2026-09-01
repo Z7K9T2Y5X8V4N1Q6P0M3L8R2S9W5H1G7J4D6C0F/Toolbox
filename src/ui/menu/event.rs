@@ -1,3 +1,8 @@
+//! Menu event handlers.
+//!
+//! Registers WM_COMMAND handlers for all menu items on [`MainWindow`].
+//! Language items rebuild the entire UI text and persist the new preference.
+
 use winsafe::prelude::{GuiEventsParent, GuiWindow};
 
 use super::state::{IDM_LANG_EN_US, IDM_LANG_ZH_CN, IDM_OPTIONS_RESTART_EXPLORER};
@@ -6,6 +11,10 @@ use crate::{
     config::{AppConfig, AppLanguage},
 };
 
+/// Register WM_COMMAND handlers for all menu items.
+///
+/// Must be called once during main window event setup, before the
+/// message loop starts.
 pub fn register_menu_events(main_window_instance: &MainWindow) {
     main_window_instance
         .main_window
@@ -25,6 +34,7 @@ pub fn register_menu_events(main_window_instance: &MainWindow) {
     }
 }
 
+/// Register a WM_COMMAND handler for a single language menu item.
 fn register_language_menu_handler(
     main_window_instance: &MainWindow,
     menu_command_id: u16,
@@ -42,9 +52,17 @@ fn register_language_menu_handler(
 
 /// Switch the application locale, rebuild all UI text, and persist the choice.
 ///
-/// If saving the config fails, the error is deferred to a WM_APP message
-/// rather than shown immediately, because showing a modal dialog during
-/// a menu command handler can cause reentrancy issues.
+/// # Steps
+/// 1. Update the `rust_i18n` locale so all subsequent `t!()` calls use the new language.
+/// 2. Rebuild the menu bar so its labels are re-translated.
+/// 3. Update the window title and all tab/page text labels.
+/// 4. Save the new language preference to the config file.
+///
+/// # Error deferral
+/// If saving the config fails, the error is stored in
+/// [`MainWindow::pending_error_message`] and a [`winsafe::co::WM::APP`] message
+/// is posted rather than showing a dialog immediately. This avoids reentrancy
+/// issues that can occur when a modal dialog is opened inside a menu handler.
 fn apply_language_change(
     main_window_instance: &MainWindow,
     locale: &str,

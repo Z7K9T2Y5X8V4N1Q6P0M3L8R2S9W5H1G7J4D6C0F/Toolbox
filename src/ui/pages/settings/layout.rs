@@ -1,11 +1,19 @@
+//! DPI-aware layout constants and calculators for the settings page.
+//!
+//! All raw pixel constants are defined at 96 DPI (100% scaling).
+//! [`gui::dpi_x`] and [`gui::dpi_y`] scale them to the actual display DPI
+//! at runtime, so the layout looks correct at any scaling factor.
+
 use winsafe::{POINT, SIZE, gui};
 
-// -- Group box constants --
+// ---------------------------------------------------------------------------
+// Raw pixel constants at 96 DPI
+// ---------------------------------------------------------------------------
+
 const GROUP_BOX_MARGIN: i32 = 10;
 const GROUP_BOX_TITLE_BAR_HEIGHT: i32 = 20;
 const GROUP_BOX_INTERNAL_PADDING: i32 = 6;
 
-// -- Checkbox constants --
 const CHECKBOX_HEIGHT: i32 = 22;
 const CHECKBOX_VERTICAL_GAP: i32 = 10;
 const CHECKBOX_LEFT_MARGIN: i32 = 20;
@@ -13,16 +21,23 @@ const CHECKBOX_RIGHT_MARGIN: i32 = 20;
 const CHECKBOX_TOP_MARGIN: i32 = 10;
 const CHECKBOX_BOTTOM_MARGIN: i32 = 16;
 
-// -- Button constants --
+/// Raw button width at 96 DPI. Exposed so [`super::build`] can pass it
+/// to [`gui::ButtonOpts`] at construction time.
 pub(super) const BUTTON_WIDTH: i32 = 75;
+
+/// Raw button height at 96 DPI.
 pub(super) const BUTTON_HEIGHT: i32 = 25;
+
 const BUTTON_HORIZONTAL_GAP: i32 = 5;
 
 // ---------------------------------------------------------------------------
 // CheckboxLayoutCalculator
 // ---------------------------------------------------------------------------
 
-/// DPI-aware layout calculator for checkboxes inside the settings content panel.
+/// Calculates DPI-scaled positions and sizes for checkboxes in the content panel.
+///
+/// Construct once per layout pass. All fields are pre-scaled on construction
+/// so individual calculations are simple arithmetic with no repeated DPI calls.
 pub(super) struct CheckboxLayoutCalculator {
     checkbox_height: i32,
     checkbox_vertical_gap: i32,
@@ -33,6 +48,7 @@ pub(super) struct CheckboxLayoutCalculator {
 }
 
 impl CheckboxLayoutCalculator {
+    /// Create a new calculator with all values scaled to the current DPI.
     pub fn new() -> Self {
         Self {
             checkbox_height: gui::dpi_y(CHECKBOX_HEIGHT),
@@ -44,6 +60,7 @@ impl CheckboxLayoutCalculator {
         }
     }
 
+    /// Return the top-left position for the checkbox at the given zero-based index.
     pub fn calculate_checkbox_position(&self, index: usize) -> POINT {
         POINT {
             x: self.checkbox_left_margin,
@@ -52,15 +69,20 @@ impl CheckboxLayoutCalculator {
         }
     }
 
+    /// Return the checkbox width that fills the content panel minus side margins.
+    ///
+    /// Enforces a minimum of 100px so the text is never completely clipped.
     pub fn calculate_checkbox_width(&self, content_panel_width: i32) -> i32 {
         (content_panel_width - self.checkbox_left_margin - self.checkbox_right_margin).max(100)
     }
 
+    /// Return the DPI-scaled checkbox height.
     pub fn checkbox_height(&self) -> i32 {
         self.checkbox_height
     }
 
-    /// Calculate the total height needed to display all checkboxes with margins.
+    /// Return the total pixel height needed to display all checkboxes,
+    /// including top and bottom margins and inter-checkbox gaps.
     pub fn calculate_total_content_height(&self, checkbox_count: usize) -> i32 {
         if checkbox_count == 0 {
             return 0;
@@ -77,9 +99,10 @@ impl CheckboxLayoutCalculator {
 // SettingsPageLayout
 // ---------------------------------------------------------------------------
 
-/// Pre-calculated positions and sizes for all controls on the settings page.
+/// Pre-calculated positions and sizes for every control on the settings page.
 ///
-/// All values are in DPI-scaled pixels relative to the tab page's client area.
+/// Computed once per WM_SIZE event from the current tab page client dimensions.
+/// All values are DPI-scaled pixels relative to the tab page's client origin.
 pub(super) struct SettingsPageLayout {
     pub group_box_position: POINT,
     pub group_box_size: SIZE,
@@ -92,6 +115,7 @@ pub(super) struct SettingsPageLayout {
 }
 
 impl SettingsPageLayout {
+    /// Calculate the full page layout from the tab page's current client size.
     pub fn calculate(tab_page_client_width: i32, tab_page_client_height: i32) -> Self {
         let group_box_margin = gui::dpi_x(GROUP_BOX_MARGIN);
         let button_width = gui::dpi_x(BUTTON_WIDTH);

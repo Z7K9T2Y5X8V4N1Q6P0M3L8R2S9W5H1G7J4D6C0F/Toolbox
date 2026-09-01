@@ -1,9 +1,15 @@
-/// Identifies each checkbox on the settings page.
+//! [`CheckboxId`] — the canonical identifier for each settings checkbox.
+//!
+//! Each variant carries three pieces of metadata, all accessed via methods:
+//! - A Win32 control ID used when creating the [`gui::Button`]
+//! - An i18n key for the checkbox label text
+//! - An i18n key for the status bar description shown on hover
+
+/// Identifies a single checkbox on the settings page.
 ///
-/// Each variant maps to:
-/// - An i18n key for the checkbox label
-/// - An i18n key for the status bar description
-/// - A unique Win32 control ID
+/// Used as a typed key throughout the settings module to avoid passing
+/// raw integers or strings. The ordering of [`CheckboxId::all`] determines
+/// the top-to-bottom display order in the UI.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum CheckboxId {
     DisableWindowsUpdate,
@@ -22,6 +28,10 @@ pub enum CheckboxId {
 }
 
 impl CheckboxId {
+    /// Returns every [`CheckboxId`] variant in display order.
+    ///
+    /// This is the single source of truth for which checkboxes exist
+    /// and the order in which they appear in the UI.
     pub fn all() -> &'static [CheckboxId] {
         &[
             CheckboxId::DisableWindowsUpdate,
@@ -40,6 +50,8 @@ impl CheckboxId {
         ]
     }
 
+    /// Returns the i18n key for the status bar description shown when
+    /// the mouse hovers over this checkbox.
     pub fn description_i18n_key(&self) -> &'static str {
         match self {
             CheckboxId::DisableWindowsUpdate => "CHECKBOX_DISABLE_WINDOWS_UPDATE_DESCRIPTION",
@@ -68,6 +80,7 @@ impl CheckboxId {
         }
     }
 
+    /// Returns the i18n key for this checkbox's label text.
     pub fn i18n_key(&self) -> &'static str {
         match self {
             CheckboxId::DisableWindowsUpdate => "CHECKBOX_DISABLE_WINDOWS_UPDATE",
@@ -88,6 +101,10 @@ impl CheckboxId {
         }
     }
 
+    /// Returns the Win32 control ID for this checkbox.
+    ///
+    /// Control IDs are used by Win32 to identify controls in WM_COMMAND
+    /// and other messages. Each value must be unique within the same parent window.
     pub fn window_control_id(&self) -> u16 {
         match self {
             CheckboxId::DisableWindowsUpdate => 2001,

@@ -1,9 +1,16 @@
+//! Settings page control construction.
+//!
+//! Each function creates exactly one control. All controls are created during
+//! [`SettingsPage::new`] before the message loop starts — Win32 requires
+//! controls to be created on the same thread as their parent window.
+
 use rust_i18n::t;
 use winsafe::{POINT, co, gui, prelude::*};
 
 use super::layout::CheckboxLayoutCalculator;
 use super::state::CheckboxId;
 
+/// Create the [`gui::TabPage`] that hosts all settings controls.
 pub(super) fn create_tab_page(parent_window: &(impl GuiParent + 'static)) -> gui::TabPage {
     gui::TabPage::new(
         parent_window,
@@ -14,6 +21,7 @@ pub(super) fn create_tab_page(parent_window: &(impl GuiParent + 'static)) -> gui
     )
 }
 
+/// Create the group box frame that visually wraps the checkbox list.
 pub(super) fn create_group_box(parent_window: &gui::TabPage) -> gui::Button {
     gui::Button::new(
         parent_window,
@@ -25,10 +33,11 @@ pub(super) fn create_group_box(parent_window: &gui::TabPage) -> gui::Button {
     )
 }
 
-/// Create the outer scrollable panel that hosts the content panel.
+/// Create the outer scrollable panel that clips and scrolls the content panel.
 ///
-/// This panel has WS_VSCROLL to show a vertical scrollbar, and WS_EX_COMPOSITED
-/// to reduce flicker during scroll operations.
+/// `WS_VSCROLL` adds the vertical scrollbar track. `WS_EX_COMPOSITED` enables
+/// double-buffered painting on this window and all its children, which
+/// eliminates the flicker visible during scroll operations.
 pub(super) fn create_scrollable_panel(parent_window: &gui::TabPage) -> gui::WindowControl {
     gui::WindowControl::new(
         parent_window,
@@ -48,8 +57,9 @@ pub(super) fn create_scrollable_panel(parent_window: &gui::TabPage) -> gui::Wind
 
 /// Create the inner content panel that holds all checkboxes.
 ///
-/// This panel is a child of the scrollable panel and can be taller than its
-/// parent. Scrolling is achieved by shifting this panel's Y position.
+/// This panel is a direct child of the scrollable panel and is intentionally
+/// taller than its parent when there are many checkboxes. Scrolling is
+/// implemented by shifting this panel's Y position upward.
 pub(super) fn create_content_panel(parent_window: &gui::WindowControl) -> gui::WindowControl {
     gui::WindowControl::new(
         parent_window,
@@ -62,6 +72,10 @@ pub(super) fn create_content_panel(parent_window: &gui::WindowControl) -> gui::W
     )
 }
 
+/// Create all checkbox controls, one per [`CheckboxId`] variant, in display order.
+///
+/// Returns a `Vec` of `(id, button)` pairs so callers can look up the
+/// [`CheckboxId`] for any given button handle and vice versa.
 pub(super) fn create_checkboxes(
     content_panel: &gui::WindowControl,
 ) -> Vec<(CheckboxId, gui::Button)> {
@@ -89,6 +103,7 @@ pub(super) fn create_checkboxes(
         .collect()
 }
 
+/// Create the "Select All / Deselect All" toggle button.
 pub(super) fn create_button_select_all_toggle(parent_window: &gui::TabPage) -> gui::Button {
     gui::Button::new(
         parent_window,
@@ -101,6 +116,7 @@ pub(super) fn create_button_select_all_toggle(parent_window: &gui::TabPage) -> g
     )
 }
 
+/// Create the "Apply" button.
 pub(super) fn create_button_apply(parent_window: &gui::TabPage) -> gui::Button {
     gui::Button::new(
         parent_window,

@@ -1,9 +1,23 @@
+//! Main window sizing and positioning utilities.
+//!
+//! Provides two functions used during window initialization:
+//! - [`center_and_resize_window`] — sets the window to the default size and
+//!   centers it on the primary monitor
+//! - [`apply_minimum_window_size`] — enforces a minimum track size so the
+//!   user cannot resize the window smaller than the UI requires
+
 use winsafe::gui;
 
+/// The default window width at 96 DPI (100% scaling).
 const WINDOW_WIDTH: i32 = 310;
+
+/// The default window height at 96 DPI (100% scaling).
 const WINDOW_HEIGHT: i32 = 585;
 
-/// Center the main window on screen and set it to the target size.
+/// Resize the main window to the default size and center it on the primary monitor.
+///
+/// Called once during `WM_CREATE` after the window handle is valid.
+/// Both dimensions are scaled to the actual display DPI before applying.
 pub fn center_and_resize_window(main_window_handle: &winsafe::HWND) -> winsafe::AnyResult<()> {
     let calculated_window_size = winsafe::SIZE {
         cx: gui::dpi_x(WINDOW_WIDTH),
@@ -27,7 +41,10 @@ pub fn center_and_resize_window(main_window_handle: &winsafe::HWND) -> winsafe::
     Ok(())
 }
 
-/// Enforce a minimum window size so the UI remains usable.
+/// Set the minimum track size in a `WM_GETMINMAXINFO` handler.
+///
+/// Prevents the user from resizing the window below the default dimensions,
+/// which would cause controls to overlap or be clipped.
 pub fn apply_minimum_window_size(min_max_info: &mut winsafe::MINMAXINFO) {
     min_max_info.ptMinTrackSize = winsafe::POINT {
         x: gui::dpi_x(WINDOW_WIDTH),

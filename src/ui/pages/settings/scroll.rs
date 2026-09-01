@@ -1,6 +1,19 @@
+//! Vertical scroll event handlers for the settings page.
+//!
+//! Scrolling is implemented by shifting the content panel's Y position
+//! rather than using a native scrolling window. This gives full control
+//! over the scroll behavior and avoids artifacts from nested scroll windows.
+//!
+//! Two events drive scrolling:
+//! - `WM_VSCROLL` on the scrollable panel — fired by the scrollbar track and arrows
+//! - `WM_MOUSEWHEEL` on the content panel — fired when the mouse wheel is used
+
 use winsafe::{HwndPlace, POINT, SCROLLINFO, SIZE, SystemParametersInfo, co, gui, msg, prelude::*};
 
-/// Register the vertical scrollbar event on the scrollable panel.
+/// Register the `WM_VSCROLL` handler on the scrollable panel.
+///
+/// Translates each scroll request variant into a new absolute scroll position
+/// and delegates to [`apply_scroll_position`].
 pub(super) fn setup_scroll_event(
     scrollable_panel: &gui::WindowControl,
     content_panel: &gui::WindowControl,
@@ -55,11 +68,12 @@ pub(super) fn setup_scroll_event(
         });
 }
 
-/// Register the mouse wheel event on the content panel.
+/// Register the `WM_MOUSEWHEEL` handler on the content panel.
 ///
 /// Mouse wheel messages are delivered to the control under the cursor,
-/// which is the content panel (not the scrollable panel). We translate
-/// wheel deltas into synthetic WM_VSCROLL messages on the scrollable panel.
+/// which is the content panel rather than the scrollable panel. We translate
+/// wheel deltas into synthetic `WM_VSCROLL` messages sent to the scrollable
+/// panel so the existing scroll handler processes them uniformly.
 pub(super) fn setup_mousewheel_event(
     scrollable_panel: &gui::WindowControl,
     content_panel: &gui::WindowControl,
@@ -114,10 +128,12 @@ pub(super) fn setup_mousewheel_event(
     });
 }
 
-/// Query the system setting for how many lines to scroll per mouse wheel notch.
+/// Query the system preference for how many lines to scroll per wheel notch.
 ///
-/// Returns `None` if the system is configured for "page at a time" scrolling
-/// (WHEEL_PAGESCROLL), in which case the caller should use SB_PAGEUP/PAGEDOWN.
+/// Returns `None` when the system is configured for whole-page scrolling
+/// (`WHEEL_PAGESCROLL`), in which case the caller should use
+/// `SB_PAGEUP` / `SB_PAGEDOWN` instead of `SB_LINEUP` / `SB_LINEDOWN`.
+/// Falls back to 3 lines if the system call fails.
 fn get_wheel_scroll_lines() -> Option<u32> {
     const WHEEL_PAGESCROLL: u32 = u32::MAX;
 
@@ -137,7 +153,11 @@ fn get_wheel_scroll_lines() -> Option<u32> {
     }
 }
 
-/// Move the content panel to reflect the new scroll position and update the scrollbar thumb.
+/// Update the scrollbar thumb position and shift the content panel accordingly.
+///
+/// The content panel's Y position is set to `-new_scroll_position` so that
+/// the portion of the content that should be visible is aligned with the top
+/// of the scrollable panel's client area.
 pub(super) fn apply_scroll_position(
     scrollable_panel: &gui::WindowControl,
     content_panel: &gui::WindowControl,

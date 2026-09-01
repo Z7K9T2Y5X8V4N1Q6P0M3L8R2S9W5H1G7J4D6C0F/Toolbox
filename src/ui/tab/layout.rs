@@ -1,7 +1,14 @@
-use winsafe::{HWND, HwndPlace, POINT, RECT, SIZE, co, gui, msg, prelude::*};
+//! Tab control and tab page layout utilities.
+//!
+//! All sizing and positioning logic for the tab control widget and its hosted
+//! pages lives here. Also provides shared helpers used by page-level event
+//! handlers for control repositioning and Z-order management.
+
+use winsafe::{HBRUSH, HWND, HwndPlace, POINT, RECT, SIZE, co, gui, msg, prelude::*};
 
 const TAB_CONTROL_MARGIN: i32 = 10;
 
+/// Resize the tab control to fill the main window client area with a uniform margin.
 pub(crate) fn resize_tab_control(
     tab_control: &gui::Tab,
     window_client_width: i32,
@@ -26,6 +33,9 @@ pub(crate) fn resize_tab_control(
     Ok(())
 }
 
+/// Resize the currently selected tab page to fill the tab control's content area.
+///
+/// Only the visible page is resized. If no tab is selected, this is a no-op.
 pub(crate) fn resize_current_tab_page(
     tab_control: &gui::Tab,
     tab_pages: &[gui::TabPage],
@@ -58,11 +68,12 @@ pub(crate) fn resize_current_tab_page(
     Ok(())
 }
 
-/// Calculate the client-area rectangle for a tab page inside the tab control.
+/// Calculate the content rectangle of a tab page in the parent's client coordinates.
 ///
-/// The tab control header (the row of tab titles) occupies some space at the top.
-/// TCM_ADJUSTRECT with display_rect=false converts the tab control's full rect
-/// into the content area below the header, in the parent's client coordinates.
+/// The tab control header (the row of tab title buttons) occupies some space
+/// at the top of the tab control. `TCM_ADJUSTRECT` with `display_rect = false`
+/// converts the full tab control rect into the smaller content area beneath
+/// the header, which is where the tab pages actually live.
 pub(crate) fn calculate_tab_page_rect(tab_control_hwnd: &HWND) -> winsafe::AnyResult<RECT> {
     let tab_control_parent_hwnd = tab_control_hwnd.GetParent()?;
 
@@ -79,7 +90,10 @@ pub(crate) fn calculate_tab_page_rect(tab_control_hwnd: &HWND) -> winsafe::AnyRe
     Ok(tab_page_rect)
 }
 
-/// Reposition and resize a control in a single SetWindowPos call.
+/// Reposition and resize a control in a single [`SetWindowPos`] call.
+///
+/// Uses `SWP_NOZORDER | SWP_NOCOPYBITS` to avoid unnecessary repaints
+/// and Z-order changes.
 pub(crate) fn reposition_and_resize_control(
     control_hwnd: &HWND,
     position: POINT,
@@ -95,6 +109,9 @@ pub(crate) fn reposition_and_resize_control(
 }
 
 /// Bring a control to the top of the Z-order among its siblings.
+///
+/// Used to ensure the scrollable panel renders above the group box frame
+/// so its scrollbar remains clickable.
 pub(crate) fn bring_control_to_top(control_hwnd: &HWND) -> winsafe::AnyResult<()> {
     control_hwnd.SetWindowPos(
         HwndPlace::Place(co::HWND_PLACE::TOP),
@@ -105,12 +122,17 @@ pub(crate) fn bring_control_to_top(control_hwnd: &HWND) -> winsafe::AnyResult<()
     Ok(())
 }
 
-/// Paint the tab page background with the system button face color.
+/// Register a WM_ERASEBKGND handler that paints the tab page background
+/// with the system button face color.
+///
+/// Without this, tab pages may show a white or transparent background
+/// because WinSafe's [`gui::TabPage`] does not paint its own background.
+/// This must be called during page construction, before the message loop starts.
 pub(crate) fn paint_tab_page_background(tab_page: &gui::TabPage) {
     let cloned_tab_page = tab_page.clone();
     tab_page.on().wm_erase_bkgnd(move |erase_bkgnd_params| {
         let tab_page_client_rect = cloned_tab_page.hwnd().GetClientRect()?;
-        let background_brush = winsafe::HBRUSH::GetSysColorBrush(co::COLOR::BTNFACE)?;
+        let background_brush = HBRUSH::GetSysColorBrush(co::COLOR::BTNFACE)?;
         erase_bkgnd_params
             .hdc
             .FillRect(tab_page_client_rect, &background_brush)?;

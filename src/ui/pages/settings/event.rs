@@ -1,3 +1,8 @@
+//! Settings page event registration.
+//!
+//! [`setup_all_events`] is the single entry point called from [`SettingsPage::new`].
+//! It wires up every event handler for the settings page in the correct order.
+
 use winsafe::{HwndPlace, POINT, SCROLLINFO, SIZE, co, gui, msg, prelude::*};
 
 use super::layout::{CheckboxLayoutCalculator, SettingsPageLayout};
@@ -5,7 +10,10 @@ use super::state::CheckboxId;
 use crate::ui;
 use crate::ui::tab::layout as tab_layout;
 
-/// Wire up all events for the settings page.
+/// Wire up all event handlers for the settings page.
+///
+/// Must be called once during [`SettingsPage::new`], after all controls
+/// are constructed but before the message loop starts.
 pub(super) fn setup_all_events(
     tab_page: &gui::TabPage,
     group_box: &gui::Button,
@@ -41,6 +49,7 @@ pub(super) fn setup_all_events(
 // Resize
 // ---------------------------------------------------------------------------
 
+/// Register the `WM_SIZE` handler that repositions all controls on the page.
 fn setup_resize_event(
     tab_page: &gui::TabPage,
     group_box: &gui::Button,
@@ -61,8 +70,8 @@ fn setup_resize_event(
     let cloned_button_apply = button_apply.clone();
 
     tab_page.on().wm_size(move |size_info| {
-        // The scrollable panel must be on top so its scrollbar is clickable
-        // above the group box frame.
+        // The scrollable panel must sit above the group box in the Z-order so
+        // its scrollbar track remains clickable and is not obscured by the frame.
         tab_layout::bring_control_to_top(cloned_scrollable_panel.hwnd())?;
 
         let settings_page_layout =
@@ -81,11 +90,9 @@ fn setup_resize_event(
         )?;
 
         let layout_calculator = CheckboxLayoutCalculator::new();
-
         let content_panel_width = settings_page_layout.scrollable_panel_size.cx;
         let content_panel_total_height =
             layout_calculator.calculate_total_content_height(cloned_checkboxes.len());
-
         let scrollable_panel_visible_height = settings_page_layout.scrollable_panel_size.cy;
 
         tab_layout::reposition_and_resize_control(
@@ -135,10 +142,12 @@ fn setup_resize_event(
     });
 }
 
-/// Update the vertical scrollbar range and page size after a resize.
+/// Recalculate the scrollbar range and page size after the panel is resized.
 ///
-/// If the content fits within the visible area, the scrollbar is hidden
-/// and the content panel is scrolled back to the top.
+/// If all checkboxes fit within the visible height, the scrollbar is hidden
+/// and the content panel is scrolled back to the top. Otherwise the scrollbar
+/// range is set to `[0, content_height - 1]` with the visible height as the
+/// page size, and the previous scroll position is clamped to the new maximum.
 fn update_scrollbar_range(
     scrollable_panel: &gui::WindowControl,
     content_panel: &gui::WindowControl,
@@ -184,6 +193,11 @@ fn update_scrollbar_range(
 // Button events
 // ---------------------------------------------------------------------------
 
+/// Register the click handler for the "Select All / Deselect All" toggle button.
+///
+/// If every checkbox is currently checked, all are unchecked. Otherwise all
+/// are checked. The state is read and written via `BM_GETCHECK` / `BM_SETCHECK`
+/// rather than tracking it manually so it always reflects the true Win32 state.
 fn setup_button_select_all_toggle_event(
     button_select_all_toggle: &gui::Button,
     checkboxes: &[(CheckboxId, gui::Button)],
@@ -217,6 +231,10 @@ fn setup_button_select_all_toggle_event(
     });
 }
 
+/// Register the click handler for the "Apply" button.
+///
+/// Currently a no-op placeholder — actual registry write logic will be
+/// added here when the apply functionality is implemented.
 fn setup_button_apply_event(button_apply: &gui::Button) {
     button_apply.on().bn_clicked(move || Ok(()));
 }

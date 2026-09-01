@@ -1,8 +1,17 @@
+//! [`SettingsPage`] — the public handle for the settings tab page.
+//!
+//! Owns all controls and exposes only the operations the rest of the
+//! application needs: construction and locale-driven text updates.
+
 use rust_i18n::t;
 use winsafe::{gui, prelude::*};
 
 use super::state::CheckboxId;
 
+/// The settings tab page.
+///
+/// Cloning is cheap — all inner fields are reference-counted WinSafe handles.
+/// The [`From`] impl allows this to be handed directly to [`gui::Tab`] pages.
 #[derive(Clone)]
 pub struct SettingsPage {
     tab_page: gui::TabPage,
@@ -21,6 +30,10 @@ impl From<SettingsPage> for gui::TabPage {
 }
 
 impl SettingsPage {
+    /// Construct the settings page, creating all controls and registering all events.
+    ///
+    /// Must be called before the message loop starts, on the same thread as
+    /// the parent window.
     pub fn new(parent_window: &(impl GuiParent + 'static), status_bar: gui::StatusBar) -> Self {
         let tab_page = super::build::create_tab_page(parent_window);
         let group_box = super::build::create_group_box(&tab_page);
@@ -52,7 +65,10 @@ impl SettingsPage {
         }
     }
 
-    /// Update all visible text labels to reflect the current locale.
+    /// Re-translate all visible text labels to the current locale.
+    ///
+    /// Called by [`crate::ui::tab::container::TabContainer::update_page_contents`]
+    /// after a language change.
     pub fn update_texts(&self) -> winsafe::AnyResult<()> {
         self.group_box
             .hwnd()

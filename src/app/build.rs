@@ -1,3 +1,5 @@
+//! Main window construction and message loop entry point.
+
 use std::{cell::RefCell, rc::Rc};
 
 use rust_i18n::t;
@@ -5,6 +7,15 @@ use winsafe::gui;
 
 use crate::ui;
 
+/// The root window of the application.
+///
+/// Holds references to all top-level UI components. Cloning is cheap
+/// because all inner fields use `Rc` or WinSafe's own reference-counted handles.
+///
+/// The `pending_error_message` field is a deferred error channel: operations
+/// that cannot show a modal dialog synchronously (e.g. inside a menu handler)
+/// store their error here and post [`winsafe::co::WM::APP`] to trigger display
+/// after the current message processing completes.
 #[derive(Clone)]
 pub struct MainWindow {
     pub(crate) main_window: gui::WindowMain,
@@ -14,6 +25,10 @@ pub struct MainWindow {
 }
 
 impl MainWindow {
+    /// Create the main window, initialize all UI components, and run the message loop.
+    ///
+    /// Returns when the user closes the window. The return value is the exit
+    /// code that should be passed back to the OS.
     pub fn create_and_run() -> winsafe::AnyResult<i32> {
         super::init::initialize_application();
 

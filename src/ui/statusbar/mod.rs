@@ -1,3 +1,12 @@
+//! Status bar construction and hover event handling.
+//!
+//! The status bar sits at the bottom of the main window and displays
+//! a description of whichever checkbox the mouse is currently hovering over.
+//!
+//! # Module Structure
+//! - [`build`] — creates the [`gui::StatusBar`] control
+//! - [`event`] — registers mouse hover/leave events on each checkbox
+
 mod build;
 mod event;
 

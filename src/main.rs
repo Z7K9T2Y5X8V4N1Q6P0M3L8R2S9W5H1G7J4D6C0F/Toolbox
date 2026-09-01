@@ -1,3 +1,10 @@
+//! Application entry point.
+//!
+//! Initializes the i18n system and starts the main window. Any unhandled
+//! error that propagates out of the message loop is shown in an error dialog
+//! rather than printed to stderr, since this is a GUI-only application with
+//! no console (`#![windows_subsystem = "windows"]`).
+
 #![windows_subsystem = "windows"]
 
 use rust_i18n::{i18n, t};

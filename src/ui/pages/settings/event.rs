@@ -188,6 +188,20 @@ fn update_scrollbar_range(
             clamped_old_vertical_scroll_position,
         )?;
     } else {
+        // Reset SCROLLINFO properties to zero to invalidate the scroll range.
+        // Hiding the scrollbar via ShowScrollBar alone leaves the internal range
+        // intact, which causes synthetic WM_VSCROLL messages from mouse wheel
+        // events to continue scrolling an invisible track.
+        let mut scroll_info = SCROLLINFO::default();
+        scroll_info.fMask = co::SIF::RANGE | co::SIF::PAGE | co::SIF::POS;
+        scroll_info.nMin = 0;
+        scroll_info.nMax = 0;
+        scroll_info.nPage = 0;
+        scroll_info.nPos = 0;
+        scrollable_panel
+            .hwnd()
+            .SetScrollInfo(co::SBB::VERT, &scroll_info, true);
+
         super::scroll::apply_scroll_position(scrollable_panel, content_panel, 0)?;
     }
 

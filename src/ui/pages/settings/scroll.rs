@@ -163,9 +163,12 @@ pub(super) fn apply_scroll_position(
     content_panel: &gui::WindowControl,
     new_scroll_position: i32,
 ) -> winsafe::AnyResult<()> {
+    let mut scroll_info = SCROLLINFO::default();
+    scroll_info.fMask = co::SIF::POS;
+    scroll_info.nPos = new_scroll_position;
     scrollable_panel
         .hwnd()
-        .SetScrollPos(co::SBB::VERT, new_scroll_position, true)?;
+        .SetScrollInfo(co::SBB::VERT, &scroll_info, true);
 
     content_panel.hwnd().SetWindowPos(
         HwndPlace::None,

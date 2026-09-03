@@ -163,7 +163,13 @@ fn update_scrollbar_range(
     if is_needs_scrollbar {
         let scrollable_maximum =
             (content_panel_total_height - scrollable_panel_visible_height).max(0);
-        let old_vertical_scroll_position = scrollable_panel.hwnd().GetScrollPos(co::SBB::VERT)?;
+
+        let mut scroll_info_position = SCROLLINFO::default();
+        scroll_info_position.fMask = co::SIF::POS;
+        scrollable_panel
+            .hwnd()
+            .GetScrollInfo(co::SBB::VERT, &mut scroll_info_position)?;
+        let old_vertical_scroll_position = scroll_info_position.nPos;
         let clamped_old_vertical_scroll_position =
             old_vertical_scroll_position.min(scrollable_maximum).max(0);
 

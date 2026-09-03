@@ -2,10 +2,13 @@
 //!
 //! Initializes the i18n system and starts the main window. Any unhandled
 //! error that propagates out of the message loop is shown in an error dialog
-//! rather than printed to stderr, since this is a GUI-only application with
-//! no console (`#![windows_subsystem = "windows"]`).
+//! rather than printed to stderr.
+//!
+//! In release builds (`#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]`),
+//! the application runs without a console window. In debug builds, a console
+//! is attached so panic messages and debug output remain visible.
 
-#![windows_subsystem = "windows"]
+#![cfg_attr(not(debug_assertions), windows_subsystem = "windows")]
 
 use rust_i18n::{i18n, t};
 use winsafe::prelude::Handle;

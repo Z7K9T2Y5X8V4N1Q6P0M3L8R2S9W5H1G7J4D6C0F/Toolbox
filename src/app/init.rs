@@ -1,6 +1,7 @@
 //! Application initialization routines that run before the main window is created.
 //!
-//! Call order matters here: locale must be set before any UI text is rendered,
+//! Call order matters here: the logger must be initialized first to capture all
+//! subsequent log output, locale must be set before any UI text is rendered,
 //! and the UI hook must be installed before any window is created.
 
 use crate::config::{AppConfig, AppLanguage};
@@ -10,7 +11,15 @@ use crate::{error, ui};
 ///
 /// This must be called once, at the very start of [`MainWindow::create_and_run`],
 /// before any Win32 window or control is created.
+///
+/// # Initialization sequence
+/// 1. Logger — captures debug output from all subsequent steps
+/// 2. Initial locale — ensures early UI elements use the system language
+/// 3. UI customization hook — must be installed before any window creation
+/// 4. Panic hook — replaces default stderr output with a GUI error dialog
+/// 5. Config locale — overrides system locale with user preference if available
 pub fn initialize_application() {
+    env_logger::Builder::from_env(env_logger::Env::default().default_filter_or("debug")).init();
     setup_initial_locale();
     ui::window::hook::install_ui_customization_hook();
     error::panic::install_panic_hook();

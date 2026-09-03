@@ -5,7 +5,7 @@
 
 use winsafe::{gui, prelude::*};
 
-/// The window visual styles tab page
+/// The window visual styles tab page.
 ///
 /// Cloning is cheap — all inner fields are reference-counted WinSafe handles.
 /// The [`From`] impl allows this to be handed directly to [`gui::Tab`] pages.
@@ -13,6 +13,7 @@ use winsafe::{gui, prelude::*};
 pub struct WindowVisualStylesPage {
     tab_page: gui::TabPage,
     combobox: gui::ComboBox,
+    listview: gui::ListView,
 }
 
 impl From<WindowVisualStylesPage> for gui::TabPage {
@@ -22,16 +23,21 @@ impl From<WindowVisualStylesPage> for gui::TabPage {
 }
 
 impl WindowVisualStylesPage {
-    /// Construct the page, creating all controls and registering all events
+    /// Construct the window visual styles page, creating all controls and registering all events.
     ///
     /// Must be called before the message loop starts, on the same thread as
     /// the parent window.
     pub fn new(parent_window: &(impl GuiParent + 'static)) -> Self {
         let tab_page = super::build::create_tab_page(parent_window);
         let combobox = super::build::create_combobox(&tab_page);
+        let listview = super::build::create_listview(&tab_page);
 
-        super::event::setup_all_events(&tab_page, &combobox);
+        super::event::setup_all_events(&tab_page, &combobox, &listview);
 
-        Self { tab_page, combobox }
+        Self {
+            tab_page,
+            combobox,
+            listview,
+        }
     }
 }

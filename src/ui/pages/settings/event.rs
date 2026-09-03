@@ -25,7 +25,6 @@ pub(super) fn setup_all_events(
     status_bar: &gui::StatusBar,
 ) {
     tab_layout::paint_tab_page_background(tab_page);
-
     setup_resize_event(
         tab_page,
         group_box,

@@ -124,24 +124,26 @@ impl SettingsPageLayout {
         let group_box_title_bar_height = gui::dpi_y(GROUP_BOX_TITLE_BAR_HEIGHT);
         let group_box_internal_padding = gui::dpi_x(GROUP_BOX_INTERNAL_PADDING);
 
-        let group_box_width = tab_page_client_width - 2 * group_box_margin;
+        let group_box_width = (tab_page_client_width - 2 * group_box_margin).max(0);
         let group_box_height =
-            tab_page_client_height - (2 * group_box_margin) - button_height - group_box_margin;
+            (tab_page_client_height - (2 * group_box_margin) - button_height - group_box_margin)
+                .max(0);
 
         let scrollable_panel_position = POINT {
             x: group_box_margin + group_box_internal_padding,
             y: group_box_margin + group_box_title_bar_height,
         };
         let scrollable_panel_size = SIZE {
-            cx: group_box_width - 2 * group_box_internal_padding,
-            cy: group_box_height - group_box_title_bar_height - group_box_internal_padding,
+            cx: (group_box_width - 2 * group_box_internal_padding).max(0),
+            cy: (group_box_height - group_box_title_bar_height - group_box_internal_padding).max(0),
         };
 
         let button_vertical_position = group_box_margin + group_box_height + group_box_margin;
         let button_apply_horizontal_position =
-            tab_page_client_width - group_box_margin - button_width;
+            (tab_page_client_width - group_box_margin - button_width).max(group_box_margin);
         let button_select_all_toggle_horizontal_position =
-            button_apply_horizontal_position - button_horizontal_gap - button_width;
+            (button_apply_horizontal_position - button_horizontal_gap - button_width)
+                .max(group_box_margin);
 
         Self {
             group_box_position: POINT {

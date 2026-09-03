@@ -1,26 +1,38 @@
 //! Window visual styles page event registration.
 //!
-//! [`setup_all_events`] is the single entry point called from
-//! [`WindowVisualStylesPage::new`]. It wires up every event handler for
-//! this page in the correct order.
+//! [`setup_all_events`] is the single entry point called from [`WindowVisualStylesPage::new`].
+//! It wires up every event handler for the window visual styles page in the correct order.
 
 use winsafe::{gui, prelude::*};
 
 use super::layout::WindowVisualStylesPageLayout;
 use crate::ui::tab::layout as tab_layout;
 
-/// Wire up all event handlers for the window visual styles page
+/// Wire up all event handlers for the window visual styles page.
 ///
-/// Must be called once during [`WindowVisualStylesPage::new`], after all
-/// controls are constructed but before the message loop starts.
-pub(super) fn setup_all_events(tab_page: &gui::TabPage, combobox: &gui::ComboBox) {
+/// Must be called once during [`WindowVisualStylesPage::new`], after all controls
+/// are constructed but before the message loop starts.
+pub(super) fn setup_all_events(
+    tab_page: &gui::TabPage,
+    combobox: &gui::ComboBox,
+    listview: &gui::ListView,
+) {
     tab_layout::paint_tab_page_background(tab_page);
-    setup_resize_event(tab_page, combobox);
+    setup_resize_event(tab_page, combobox, listview);
 }
 
-/// Register the `WM_SIZE` handler that repositions the combobox control
-fn setup_resize_event(tab_page: &gui::TabPage, combobox: &gui::ComboBox) {
+// ---------------------------------------------------------------------------
+// Resize
+// ---------------------------------------------------------------------------
+
+/// Register the `WM_SIZE` handler that repositions all controls on the page.
+///
+/// Both controls are repositioned and resized dynamically whenever the window size changes.
+/// The combobox stays at the top with fixed height, and the listview fills all remaining
+/// vertical space below it, maintaining consistent margins on all sides.
+fn setup_resize_event(tab_page: &gui::TabPage, combobox: &gui::ComboBox, listview: &gui::ListView) {
     let cloned_combobox = combobox.clone();
+    let cloned_listview = listview.clone();
 
     tab_page.on().wm_size(move |size_info| {
         let window_visual_styles_page_layout = WindowVisualStylesPageLayout::calculate(
@@ -28,11 +40,16 @@ fn setup_resize_event(tab_page: &gui::TabPage, combobox: &gui::ComboBox) {
             size_info.client_area.cy,
         );
 
-        cloned_combobox.hwnd().SetWindowPos(
-            winsafe::HwndPlace::None,
+        tab_layout::reposition_and_resize_control(
+            cloned_combobox.hwnd(),
             window_visual_styles_page_layout.combobox_position,
             window_visual_styles_page_layout.combobox_size,
-            winsafe::co::SWP::NOZORDER | winsafe::co::SWP::NOCOPYBITS,
+        )?;
+
+        tab_layout::reposition_and_resize_control(
+            cloned_listview.hwnd(),
+            window_visual_styles_page_layout.listview_position,
+            window_visual_styles_page_layout.listview_size,
         )?;
 
         Ok(())

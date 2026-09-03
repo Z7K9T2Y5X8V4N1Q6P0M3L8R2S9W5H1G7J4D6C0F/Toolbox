@@ -6,7 +6,7 @@
 
 use winsafe::{co, gui, prelude::*};
 
-/// Create the [`gui::TabPage`] that hosts all window visual styles controls
+/// Create the [`gui::TabPage`] that hosts all window visual styles controls.
 pub(super) fn create_tab_page(parent_window: &(impl GuiParent + 'static)) -> gui::TabPage {
     gui::TabPage::new(
         parent_window,
@@ -17,15 +17,35 @@ pub(super) fn create_tab_page(parent_window: &(impl GuiParent + 'static)) -> gui
     )
 }
 
-/// Create an editable combobox for user input with a dropdown list
+/// Create an editable combobox for user input with a dropdown list.
 ///
 /// `CBS_DROPDOWN` creates a combobox where the edit field is always visible
 /// and the user can type directly or select from the dropdown list.
+/// `CBS_AUTOHSCROLL` enables automatic horizontal scrolling when the text
+/// exceeds the width of the edit control.
 pub(super) fn create_combobox(parent_window: &gui::TabPage) -> gui::ComboBox {
     gui::ComboBox::new(
         parent_window,
         gui::ComboBoxOpts {
             control_style: co::CBS::DROPDOWN | co::CBS::AUTOHSCROLL,
+            ..Default::default()
+        },
+    )
+}
+
+/// Create a ListView control with report view style.
+///
+/// `LVS_REPORT` creates a multi-column list view with column headers.
+/// `LVS_SINGLESEL` restricts selection to a single item at a time.
+/// `LVS_EX::FULLROWSELECT` highlights the entire row when an item is selected,
+/// rather than just the first column. `LVS_EX::GRIDLINES` displays grid lines
+/// between rows and columns for better visual separation.
+pub(super) fn create_listview(parent_window: &gui::TabPage) -> gui::ListView {
+    gui::ListView::new(
+        parent_window,
+        gui::ListViewOpts {
+            control_style: co::LVS::REPORT | co::LVS::SINGLESEL,
+            control_ex_style: co::LVS_EX::FULLROWSELECT | co::LVS_EX::GRIDLINES,
             ..Default::default()
         },
     )

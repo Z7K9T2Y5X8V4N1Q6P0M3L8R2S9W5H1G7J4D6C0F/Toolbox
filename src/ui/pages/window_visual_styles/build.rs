@@ -6,7 +6,7 @@
 
 use winsafe::{co, gui, prelude::*};
 
-/// Create the [`gui::TabPage`] that hosts all window visual styles controls.
+/// Create the [`gui::TabPage`] that hosts all window visual styles controls
 pub(super) fn create_tab_page(parent_window: &(impl GuiParent + 'static)) -> gui::TabPage {
     gui::TabPage::new(
         parent_window,
@@ -17,31 +17,16 @@ pub(super) fn create_tab_page(parent_window: &(impl GuiParent + 'static)) -> gui
     )
 }
 
-/// Create a read-only decorative edit control that provides the outer border.
+/// Create a standard single-line edit control for user input
 ///
-/// `WS_EX_CLIENTEDGE` gives it the standard sunken border appearance.
-/// `ES_READONLY` and `WS_DISABLED` make it non-interactive and prevent the cursor.
-pub(super) fn create_outer_edit(parent_window: &gui::TabPage) -> gui::Edit {
+/// `WS_EX_CLIENTEDGE` provides the standard sunken border.
+/// `ES_AUTOHSCROLL` enables horizontal scrolling when text exceeds the visible width.
+pub(super) fn create_edit(parent_window: &gui::TabPage) -> gui::Edit {
     gui::Edit::new(
         parent_window,
         gui::EditOpts {
             window_ex_style: co::WS_EX::CLIENTEDGE,
-            window_style: co::WS::CHILD | co::WS::VISIBLE | co::WS::DISABLED,
-            control_style: co::ES::READONLY,
-            ..Default::default()
-        },
-    )
-}
-
-/// Create the real inner edit control for actual text input.
-///
-/// No border, with auto horizontal scroll and no hide selection.
-/// This control is positioned inside the outer edit with padding.
-pub(super) fn create_inner_edit(parent_window: &gui::TabPage) -> gui::Edit {
-    gui::Edit::new(
-        parent_window,
-        gui::EditOpts {
-            control_style: co::ES::AUTOHSCROLL | co::ES::NOHIDESEL,
+            control_style: co::ES::AUTOHSCROLL,
             ..Default::default()
         },
     )

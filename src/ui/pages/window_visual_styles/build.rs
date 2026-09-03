@@ -17,16 +17,15 @@ pub(super) fn create_tab_page(parent_window: &(impl GuiParent + 'static)) -> gui
     )
 }
 
-/// Create a standard single-line edit control for user input
+/// Create an editable combobox for user input with a dropdown list
 ///
-/// `WS_EX_CLIENTEDGE` provides the standard sunken border.
-/// `ES_AUTOHSCROLL` enables horizontal scrolling when text exceeds the visible width.
-pub(super) fn create_edit(parent_window: &gui::TabPage) -> gui::Edit {
-    gui::Edit::new(
+/// `CBS_DROPDOWN` creates a combobox where the edit field is always visible
+/// and the user can type directly or select from the dropdown list.
+pub(super) fn create_combobox(parent_window: &gui::TabPage) -> gui::ComboBox {
+    gui::ComboBox::new(
         parent_window,
-        gui::EditOpts {
-            window_ex_style: co::WS_EX::CLIENTEDGE,
-            control_style: co::ES::AUTOHSCROLL,
+        gui::ComboBoxOpts {
+            control_style: co::CBS::DROPDOWN | co::CBS::AUTOHSCROLL,
             ..Default::default()
         },
     )

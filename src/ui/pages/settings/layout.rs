@@ -31,6 +31,18 @@ pub(super) const BUTTON_HEIGHT: i32 = 25;
 const BUTTON_HORIZONTAL_GAP: i32 = 5;
 
 // ---------------------------------------------------------------------------
+// Helper functions
+// ---------------------------------------------------------------------------
+/// Clamp a dimension to zero if negative.
+///
+/// Used throughout layout calculations to ensure widths and heights
+/// never become negative when the window is resized very small.
+#[inline]
+fn non_negative(value: i32) -> i32 {
+    value.max(0)
+}
+
+// ---------------------------------------------------------------------------
 // CheckboxLayoutCalculator
 // ---------------------------------------------------------------------------
 
@@ -124,18 +136,20 @@ impl SettingsPageLayout {
         let group_box_title_bar_height = gui::dpi_y(GROUP_BOX_TITLE_BAR_HEIGHT);
         let group_box_internal_padding = gui::dpi_x(GROUP_BOX_INTERNAL_PADDING);
 
-        let group_box_width = (tab_page_client_width - 2 * group_box_margin).max(0);
-        let group_box_height =
-            (tab_page_client_height - (2 * group_box_margin) - button_height - group_box_margin)
-                .max(0);
+        let group_box_width = non_negative(tab_page_client_width - 2 * group_box_margin);
+        let group_box_height = non_negative(
+            tab_page_client_height - (2 * group_box_margin) - button_height - group_box_margin,
+        );
 
         let scrollable_panel_position = POINT {
             x: group_box_margin + group_box_internal_padding,
             y: group_box_margin + group_box_title_bar_height,
         };
         let scrollable_panel_size = SIZE {
-            cx: (group_box_width - 2 * group_box_internal_padding).max(0),
-            cy: (group_box_height - group_box_title_bar_height - group_box_internal_padding).max(0),
+            cx: non_negative(group_box_width - 2 * group_box_internal_padding),
+            cy: non_negative(
+                group_box_height - group_box_title_bar_height - group_box_internal_padding,
+            ),
         };
 
         let button_vertical_position = group_box_margin + group_box_height + group_box_margin;

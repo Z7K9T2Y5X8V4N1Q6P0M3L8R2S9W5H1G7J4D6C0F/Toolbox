@@ -15,6 +15,18 @@ const COMBOBOX_HEIGHT: i32 = 25;
 const CONTROL_VERTICAL_GAP: i32 = 10;
 
 // ---------------------------------------------------------------------------
+// Helper functions
+// ---------------------------------------------------------------------------
+/// Clamp a dimension to zero if negative.
+///
+/// Used throughout layout calculations to ensure widths and heights
+/// never become negative when the window is resized very small.
+#[inline]
+fn non_negative(value: i32) -> i32 {
+    value.max(0)
+}
+
+// ---------------------------------------------------------------------------
 // WindowVisualStylesPageLayout
 // ---------------------------------------------------------------------------
 
@@ -41,7 +53,7 @@ impl WindowVisualStylesPageLayout {
             y: page_margin,
         };
         let combobox_size = SIZE {
-            cx: (tab_page_client_width - page_margin * 2).max(0),
+            cx: non_negative(tab_page_client_width - page_margin * 2),
             cy: combobox_height,
         };
 
@@ -50,12 +62,14 @@ impl WindowVisualStylesPageLayout {
             y: page_margin + combobox_height + control_vertical_gap,
         };
 
-        let listview_height = tab_page_client_height
-            - (page_margin + combobox_height + control_vertical_gap + page_margin);
+        let listview_height = non_negative(
+            tab_page_client_height
+                - (page_margin + combobox_height + control_vertical_gap + page_margin),
+        );
 
         let listview_size = SIZE {
-            cx: (tab_page_client_width - page_margin * 2).max(0),
-            cy: listview_height.max(0),
+            cx: non_negative(tab_page_client_width - page_margin * 2),
+            cy: listview_height,
         };
 
         Self {

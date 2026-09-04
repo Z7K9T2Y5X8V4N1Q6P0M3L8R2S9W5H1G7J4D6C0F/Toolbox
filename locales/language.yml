@@ -55,6 +55,10 @@ FATAL_ERROR_UNKNOWN_ERROR:
   en-US: "Unknown error"
   zh-CN: "未知错误"
 
+COMBOBOX_CUE_BANNER:
+  en-US: "Input the process name or PID"
+  zh-CN: "输入进程名或 PID"
+
 INSTALL_UI_CUSTOMIZATION_HOOK_FAILED:
   en-US: "Failed to install UI customization hook"
   zh-CN: "安装界面自定义钩子失败"

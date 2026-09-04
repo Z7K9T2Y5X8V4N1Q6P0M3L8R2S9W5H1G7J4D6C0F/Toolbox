@@ -32,6 +32,9 @@ features = [
 version = "0.0.28"
 features = ["gui"]
 
+[build-dependencies]
+embed-manifest = "1.5.0"
+
 [lints.clippy]
 nursery = { level = "warn", priority = 0 }
 pedantic = { level = "warn", priority = -1 }

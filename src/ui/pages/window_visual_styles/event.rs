@@ -3,7 +3,8 @@
 //! [`setup_all_events`] is the single entry point called from [`WindowVisualStylesPage::new`].
 //! It wires up every event handler for the window visual styles page in the correct order.
 
-use winsafe::{gui, prelude::*};
+use rust_i18n::t;
+use winsafe::{WString, gui, msg, prelude::*};
 
 use super::layout::WindowVisualStylesPageLayout;
 use crate::ui::tab::layout as tab_layout;
@@ -19,6 +20,27 @@ pub(super) fn setup_all_events(
 ) {
     tab_layout::paint_tab_page_background(tab_page);
     setup_resize_event(tab_page, combobox, listview);
+    setup_combobox_cue_banner_event(tab_page, combobox);
+}
+
+// ---------------------------------------------------------------------------
+// Combobox CueBanner
+// ---------------------------------------------------------------------------
+
+/// Register the `WM_CREATE` handler on the tab page to set the cue banner (placeholder) for the combobox.
+fn setup_combobox_cue_banner_event(tab_page: &gui::TabPage, combobox: &gui::ComboBox) {
+    let cloned_combobox = combobox.clone();
+    tab_page.on().wm_create(move |_| {
+        unsafe {
+            cloned_combobox
+                .hwnd()
+                .SendMessage(msg::CbSetCueBanner {
+                    text: WString::from_str(t!("COMBOBOX_CUE_BANNER")),
+                })
+                .ok()
+        };
+        Ok(0)
+    });
 }
 
 // ---------------------------------------------------------------------------

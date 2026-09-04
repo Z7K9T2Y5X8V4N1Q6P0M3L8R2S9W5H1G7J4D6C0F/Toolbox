@@ -4,14 +4,17 @@
 //! [`gui::dpi_x`] and [`gui::dpi_y`] scale them to the actual display DPI
 //! at runtime, so the layout looks correct at any scaling factor.
 
-use winsafe::{POINT, SIZE, gui};
+use rust_i18n::t;
+use winsafe::{
+    HFONT, HWND, NONCLIENTMETRICS, POINT, SIZE, SystemParametersInfo, co, guard::DeleteObjectGuard,
+    gui,
+};
 
 // ---------------------------------------------------------------------------
 // Raw pixel constants at 96 DPI
 // ---------------------------------------------------------------------------
 
 const PAGE_MARGIN: i32 = 10;
-const COMBOBOX_HEIGHT: i32 = 25;
 const CONTROL_VERTICAL_GAP: i32 = 10;
 
 // ---------------------------------------------------------------------------
@@ -35,36 +38,38 @@ fn non_negative(value: i32) -> i32 {
 /// Computed once per WM_SIZE event from the current tab page client dimensions.
 /// All values are DPI-scaled pixels relative to the tab page's client origin.
 pub(super) struct WindowVisualStylesPageLayout {
-    pub combobox_position: POINT,
-    pub combobox_size: SIZE,
+    pub edit_position: POINT,
+    pub edit_size: SIZE,
     pub listview_position: POINT,
     pub listview_size: SIZE,
 }
 
 impl WindowVisualStylesPageLayout {
-    /// Calculate the full page layout from the tab page's current client size.
-    pub fn calculate(tab_page_client_width: i32, tab_page_client_height: i32) -> Self {
+    pub fn calculate(
+        tab_page_client_width: i32,
+        tab_page_client_height: i32,
+        edit_height: i32,
+    ) -> Self {
         let page_margin = gui::dpi_x(PAGE_MARGIN);
-        let combobox_height = gui::dpi_y(COMBOBOX_HEIGHT);
         let control_vertical_gap = gui::dpi_y(CONTROL_VERTICAL_GAP);
 
-        let combobox_position = POINT {
+        let edit_position = POINT {
             x: page_margin,
             y: page_margin,
         };
-        let combobox_size = SIZE {
+        let edit_size = SIZE {
             cx: non_negative(tab_page_client_width - page_margin * 2),
-            cy: combobox_height,
+            cy: edit_height,
         };
 
         let listview_position = POINT {
             x: page_margin,
-            y: page_margin + combobox_height + control_vertical_gap,
+            y: page_margin + edit_height + control_vertical_gap,
         };
 
         let listview_height = non_negative(
             tab_page_client_height
-                - (page_margin + combobox_height + control_vertical_gap + page_margin),
+                - (page_margin + edit_height + control_vertical_gap + page_margin),
         );
 
         let listview_size = SIZE {
@@ -73,10 +78,56 @@ impl WindowVisualStylesPageLayout {
         };
 
         Self {
-            combobox_position,
-            combobox_size,
+            edit_position,
+            edit_size,
             listview_position,
             listview_size,
         }
     }
+}
+
+/// Calculates the ideal vertical dimension for a single-line Edit control.
+pub(super) fn calculate_edit_ideal_height(edit_hwnd: &HWND) -> i32 {
+    let explicit_font = unsafe { edit_hwnd.SendMessage(winsafe::msg::WmGetFont {}) };
+    let fallback_font_guard = explicit_font.is_none().then(create_fallback_font);
+
+    // If an explicit font is present, borrow it directly; otherwise dereference the guard to &HFONT.
+    let active_font: &HFONT = match &explicit_font {
+        Some(font) => font,
+        None => fallback_font_guard.as_ref().unwrap(),
+    };
+
+    let device_context = edit_hwnd
+        .GetDC()
+        .unwrap_or_else(|_| panic!("{}", t!("ERROR_GET_DEVICE_CONTEXT_FAILED")));
+
+    let _font_selection_guard = device_context
+        .SelectObject(active_font)
+        .unwrap_or_else(|_| panic!("{}", t!("ERROR_SELECT_FONT_FAILED")));
+
+    let text_metric = device_context
+        .GetTextMetrics()
+        .unwrap_or_else(|_| panic!("{}", t!("ERROR_GET_TEXT_METRICS_FAILED")));
+
+    let font_height = text_metric.tmHeight + text_metric.tmExternalLeading;
+    let edge_height = winsafe::GetSystemMetrics(co::SM::CYEDGE);
+
+    (font_height + (edge_height * 2)).max(gui::dpi_y(25))
+}
+
+/// Retrieves the system default non-client message font as a fallback.
+fn create_fallback_font() -> DeleteObjectGuard<HFONT> {
+    let mut non_client_metrics = NONCLIENTMETRICS::default();
+    unsafe {
+        SystemParametersInfo(
+            co::SPI::GETNONCLIENTMETRICS,
+            std::mem::size_of::<NONCLIENTMETRICS>() as u32,
+            &mut non_client_metrics,
+            co::SPIF::NoValue,
+        )
+    }
+    .unwrap_or_else(|_| panic!("{}", t!("ERROR_GET_NONCLIENTMETRICS_FAILED")));
+
+    HFONT::CreateFontIndirect(&non_client_metrics.lfMessageFont)
+        .unwrap_or_else(|_| panic!("{}", t!("ERROR_CREATE_FONT_FAILED")))
 }

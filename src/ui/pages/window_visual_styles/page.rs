@@ -12,7 +12,7 @@ use winsafe::{gui, prelude::*};
 #[derive(Clone)]
 pub struct WindowVisualStylesPage {
     tab_page: gui::TabPage,
-    combobox: gui::ComboBox,
+    edit: gui::Edit,
     listview: gui::ListView,
 }
 
@@ -29,14 +29,14 @@ impl WindowVisualStylesPage {
     /// the parent window.
     pub fn new(parent_window: &(impl GuiParent + 'static)) -> Self {
         let tab_page = super::build::create_tab_page(parent_window);
-        let combobox = super::build::create_combobox(&tab_page);
+        let edit = super::build::create_edit(&tab_page);
         let listview = super::build::create_listview(&tab_page);
 
-        super::event::setup_all_events(&tab_page, &combobox, &listview);
+        super::event::setup_all_events(&tab_page, &edit, &listview);
 
         Self {
             tab_page,
-            combobox,
+            edit,
             listview,
         }
     }

@@ -3,7 +3,8 @@
 //! Owns all controls and exposes only the operations the rest of the
 //! application needs: construction and locale-driven text updates.
 
-use winsafe::{gui, prelude::*};
+use rust_i18n::t;
+use winsafe::{WString, gui, msg, prelude::*};
 
 /// The window visual styles tab page.
 ///
@@ -39,5 +40,34 @@ impl WindowVisualStylesPage {
             edit,
             listview,
         }
+    }
+
+    /// Re-translate all visible text labels to the current locale.
+    ///
+    /// Updates the Edit cue banner and the ListView column headers.
+    pub fn update_texts(&self) -> winsafe::AnyResult<()> {
+        // 1. Update Edit cue banner
+        unsafe {
+            self.edit
+                .hwnd()
+                .SendMessage(msg::EmSetCueBanner {
+                    show_even_with_focus: false,
+                    text: WString::from_str(t!("COMBOBOX_CUE_BANNER")),
+                })
+                .ok();
+        }
+
+        // 2. Update ListView column headers
+        self.listview
+            .cols()
+            .get(0)
+            .set_title(&t!("LISTVIEW_COLUMN_PROCESS_NAME"))?;
+
+        self.listview
+            .cols()
+            .get(1)
+            .set_title(&t!("LISTVIEW_COLUMN_PID"))?;
+
+        Ok(())
     }
 }

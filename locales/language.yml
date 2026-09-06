@@ -59,6 +59,14 @@ COMBOBOX_CUE_BANNER:
   en-US: "Input the process name or PID"
   zh-CN: "输入进程名或 PID"
 
+LISTVIEW_COLUMN_PROCESS_NAME:
+  en-US: "Process Name"
+  zh-CN: "进程名称"
+
+LISTVIEW_COLUMN_PID:
+  en-US: "PID"
+  zh-CN: "进程 ID"
+
 INSTALL_UI_CUSTOMIZATION_HOOK_FAILED:
   en-US: "Failed to install UI customization hook"
   zh-CN: "安装界面自定义钩子失败"

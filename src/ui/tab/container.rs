@@ -74,6 +74,7 @@ impl TabContainer {
     /// Called after a language change so page labels update immediately.
     pub fn update_page_contents(&self) -> winsafe::AnyResult<()> {
         self.settings_page.update_texts()?;
+        self.window_visual_styles_page.update_texts()?;
         Ok(())
     }
 }

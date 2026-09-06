@@ -4,6 +4,7 @@
 //! [`WindowVisualStylesPage::new`] before the message loop starts — Win32 requires
 //! controls to be created on the same thread as their parent window.
 
+use rust_i18n::t;
 use winsafe::{co, gui, prelude::*};
 
 /// Create the [`gui::TabPage`] that hosts all window visual styles controls.
@@ -47,7 +48,10 @@ pub(super) fn create_listview(parent_window: &gui::TabPage) -> gui::ListView {
             control_ex_style: co::LVS_EX::FULLROWSELECT
                 | co::LVS_EX::GRIDLINES
                 | co::LVS_EX::DOUBLEBUFFER,
-            columns: &[("Process Name", gui::dpi_x(180)), ("PID", gui::dpi_x(100))],
+            columns: &[
+                (&t!("LISTVIEW_COLUMN_PROCESS_NAME"), gui::dpi_x(180)),
+                (&t!("LISTVIEW_COLUMN_PID"), gui::dpi_x(100)),
+            ],
             ..Default::default()
         },
     )

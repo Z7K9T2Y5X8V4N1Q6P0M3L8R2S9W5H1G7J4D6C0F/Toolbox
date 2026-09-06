@@ -80,18 +80,7 @@ pub(super) fn setup_mousewheel_event(
 ) {
     let cloned_scrollable_panel = scrollable_panel.clone();
     content_panel.on().wm_mouse_wheel(move |mouse_wheel_info| {
-        // WORKAROUND: WinSafe#201
-        // WmMouseWheel.wheel_distance is mistakenly 0 in some versions.
-        // We prioritize the official field and fall back to keys.raw() to get the actual delta.
-        // Once updated to a fixed version, this workaround can be removed.
-        // See: https://github.com/rodrigocfd/winsafe/issues/201
-        let official_wheel_distance = mouse_wheel_info.wheel_distance;
-        let hacks_wheel_distance = mouse_wheel_info.keys.raw() as i16;
-        let wheel_distance = if official_wheel_distance != 0 {
-            official_wheel_distance
-        } else {
-            hacks_wheel_distance
-        };
+        let wheel_distance = mouse_wheel_info.wheel_distance;
 
         let is_scrolling_up = wheel_distance > 0;
         let wheel_notches = (wheel_distance.abs() / 120).max(1) as u32;

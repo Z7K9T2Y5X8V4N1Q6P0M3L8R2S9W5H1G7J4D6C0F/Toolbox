@@ -30,7 +30,7 @@ features = [
 ]
 
 [dependencies.winsafe]
-version = "0.0.28"
+version = "0.0.29"
 features = ["gui"]
 
 [build-dependencies]

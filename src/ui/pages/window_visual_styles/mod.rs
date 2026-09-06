@@ -1,7 +1,7 @@
 //! Window visual styles tab page.
 //!
 //! Presents a single-line edit control for user input and a ListView control
-//! for displaying and managing window visual style configurations.
+//! for displaying and managing system processes in real-time.
 //!
 //! # Layout
 //! ```text
@@ -11,24 +11,26 @@
 //! │  └────────────────────────────────────┘  │
 //! │                                          │
 //! │  ┌─ listview ─────────────────────────┐  │
-//! │  │ Column 1             Column 2      │  │
+//! │  │ Process Name          PID          │  │
 //! │  ├────────────────────────────────────┤  │
-//! │  │ Item 1               Data          │  │
-//! │  │ Item 2               Data          │  │
+//! │  │ explorer.exe          404          │  │
+//! │  │ taskmgr.exe           1145140      │  │
 //! │  │ ...                                │  │
 //! │  └────────────────────────────────────┘  │
 //! └──────────────────────────────────────────┘
 //! ```
 //!
 //! # Module Structure
-//! - [`build`]  — constructs all controls (tab page, edit, listview)
-//! - [`event`]  — registers all event handlers (resize, cue banner, background paint)
-//! - [`layout`] — DPI-aware layout constants, dynamic font metrics height calculation, and position calculators
-//! - [`page`]   — [`WindowVisualStylesPage`] struct: public API for construction and text updates
+//! - [`build`]   — constructs all controls (tab page, edit, listview)
+//! - [`event`]   — registers all event handlers (resize, cue banner, process auto-refresh)
+//! - [`layout`]  — DPI-aware layout constants, dynamic font metrics height calculation, and position calculators
+//! - [`page`]    — [`WindowVisualStylesPage`] struct: public API for construction
+//! - [`process`] — system process snapshot queries and sorting logic powered by `sysinfo`
 
 mod build;
 mod event;
 mod layout;
 mod page;
+pub mod process;
 
 pub use page::WindowVisualStylesPage;

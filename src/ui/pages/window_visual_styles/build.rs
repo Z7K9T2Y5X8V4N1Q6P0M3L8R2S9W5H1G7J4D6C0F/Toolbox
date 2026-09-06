@@ -32,7 +32,7 @@ pub(super) fn create_edit(parent_window: &gui::TabPage) -> gui::Edit {
     )
 }
 
-/// Create a ListView control with report view style.
+/// Create a ListView control with report view style and predefined columns.
 ///
 /// `LVS_REPORT` creates a multi-column list view with column headers.
 /// `LVS_SINGLESEL` restricts selection to a single item at a time.
@@ -44,7 +44,10 @@ pub(super) fn create_listview(parent_window: &gui::TabPage) -> gui::ListView {
         parent_window,
         gui::ListViewOpts {
             control_style: co::LVS::REPORT | co::LVS::SINGLESEL,
-            control_ex_style: co::LVS_EX::FULLROWSELECT | co::LVS_EX::GRIDLINES,
+            control_ex_style: co::LVS_EX::FULLROWSELECT
+                | co::LVS_EX::GRIDLINES
+                | co::LVS_EX::DOUBLEBUFFER,
+            columns: &[("Process Name", gui::dpi_x(180)), ("PID", gui::dpi_x(100))],
             ..Default::default()
         },
     )
